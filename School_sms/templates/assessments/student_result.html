@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Subject Results
+{% endblock %}
+
+{% block page_title %}
+    Subject Results
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card">
+
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+
+                <h5 class="mb-1">
+                    {{ class_subject.subject.name }}
+                </h5>
+
+                <small class="text-muted">
+                    {{ class_arm }} |
+                    {{ term }}
+                </small>
+
+            </div>
+
+            <div>
+
+                <a
+                    href="#"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-plus-circle"></i>
+                    Enter Result
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>
+                            #
+                        </th>
+
+                        <th>
+                            Student
+                        </th>
+
+                        <th>
+                            Admission No.
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Grade
+                        </th>
+
+                        <th>
+                            Position
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for result in results %}
+
+                    <tr>
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+
+                            <strong>
+                                {{ result.student.full_name }}
+                            </strong>
+
+                        </td>
+
+                        <td>
+                            {{ result.student.admission_number }}
+                        </td>
+
+                        <td>
+
+                            <strong>
+                                {{ result.total_score|floatformat:2 }}
+                            </strong>
+
+                        </td>
+
+                        <td>
+
+                            {% if result.grade == "A1" %}
+
+                                <span class="badge bg-success">
+                                    {{ result.grade }}
+                                </span>
+
+                            {% elif result.grade in "B2 B3 C4 C5 C6" %}
+
+                                <span class="badge bg-primary">
+                                    {{ result.grade }}
+                                </span>
+
+                            {% elif result.grade == "F9" %}
+
+                                <span class="badge bg-danger">
+                                    {{ result.grade }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-warning text-dark">
+                                    {{ result.grade }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if result.position %}
+                                {{ result.position }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if result.is_published %}
+
+                                <span class="badge bg-success">
+                                    Published
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Draft
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="#"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                View
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="text-center py-5"
+                        >
+
+                            <i
+                                class="bi bi-clipboard-x fs-1 text-muted"
+                            ></i>
+
+                            <p class="text-muted mt-2">
+                                No results available.
+                            </p>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

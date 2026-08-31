@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ guardian.full_name }} | School SMS
+{% endblock %}
+
+{% block page_title %}
+Guardian Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+```
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <a
+            href="{% url 'students:guardian_list' %}"
+            class="text-decoration-none"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Guardians
+        </a>
+
+    </div>
+
+    <div>
+
+        <a
+            href="{% url 'students:guardian_update' guardian.pk %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-pencil"></i>
+            Edit Guardian
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="row g-4">
+
+    <div class="col-xl-4">
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body text-center p-4">
+
+                <div
+                    class="rounded-circle bg-primary text-white mx-auto mb-3 d-flex align-items-center justify-content-center"
+                    style="width:120px;height:120px;"
+                >
+
+                    <i class="bi bi-person fs-1"></i>
+
+                </div>
+
+                <h4>
+                    {{ guardian.full_name }}
+                </h4>
+
+                <p class="text-muted">
+                    {{ guardian.get_relationship_display }}
+                </p>
+
+                {% if guardian.is_active %}
+
+                    <span class="badge text-bg-success">
+                        Active
+                    </span>
+
+                {% else %}
+
+                    <span class="badge text-bg-secondary">
+                        Inactive
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-8">
+
+        <div class="card border-0 shadow-sm mb-4">
+
+            <div class="card-header bg-white">
+
+                <strong>
+                    Contact Information
+                </strong>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted">
+                            Full Name
+                        </small>
+
+                        <div>
+                            {{ guardian.full_name }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted">
+                            Relationship
+                        </small>
+
+                        <div>
+                            {{ guardian.get_relationship_display }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted">
+                            Phone
+                        </small>
+
+                        <div>
+                            {{ guardian.phone }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted">
+                            Alternative Phone
+                        </small>
+
+                        <div>
+                            {{ guardian.alternative_phone|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted">
+                            Email
+                        </small>
+
+                        <div>
+                            {{ guardian.email|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted">
+                            Occupation
+                        </small>
+
+                        <div>
+                            {{ guardian.occupation|default:"-" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-12">
+
+                        <small class="text-muted">
+                            Address
+                        </small>
+
+                        <div>
+                            {{ guardian.address|default:"-" }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white d-flex justify-content-between">
+
+                <strong>
+                    Linked Students
+                </strong>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Student</th>
+                            <th>Admission No.</th>
+                            <th>Relationship</th>
+                            <th>Class</th>
+                            <th>Arm</th>
+                            <th>Primary</th>
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for relation in guardian.students.all %}
+
+                            <tr>
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'students:student_detail' relation.student.pk %}"
+                                        class="text-decoration-none"
+                                    >
+
+                                        {{ relation.student.full_name }}
+
+                                    </a>
+
+                                </td>
+
+
+                                <td>
+                                    {{ relation.student.admission_number }}
+                                </td>
+
+
+                                <td>
+                                    {{ relation.get_relationship_display }}
+                                </td>
+
+
+                                <td>
+
+                                    {% with enrollment=relation.student.enrollments.all|first %}
+
+                                        {% if enrollment %}
+
+                                            {{ enrollment.academic_class.name }}
+
+                                        {% else %}
+
+                                            -
+
+                                        {% endif %}
+
+                                    {% endwith %}
+
+                                </td>
+
+
+                                <td>
+
+                                    {% with enrollment=relation.student.enrollments.all|first %}
+
+                                        {% if enrollment %}
+
+                                            {{ enrollment.class_arm.name }}
+
+                                        {% else %}
+
+                                            -
+
+                                        {% endif %}
+
+                                    {% endwith %}
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if relation.is_primary %}
+
+                                        <span class="badge text-bg-success">
+                                            Yes
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge text-bg-secondary">
+                                            No
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'students:student_guardian_delete' relation.student.pk relation.pk %}"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Remove this guardian from the student?')"
+                                        >
+
+                                            <i class="bi bi-x-lg"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+
+                                <td
+                                    colspan="7"
+                                    class="text-center text-muted py-4"
+                                >
+
+                                    No students linked to this guardian.
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+{% endblock %}

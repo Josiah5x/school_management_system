@@ -1,5 +1,5 @@
 from decimal import Decimal
-
+from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -166,11 +166,11 @@ class StudentAssessment(models.Model):
         related_name="student_assessments",
     )
 
-    # class_subject = models.ForeignKey(
-    #     "academics.ClassSubject",
-    #     on_delete=models.PROTECT,
-    #     related_name="student_assessments",
-    # )
+    class_subject = models.ForeignKey(
+        "academics.ClassSubject",
+        on_delete=models.PROTECT,
+        related_name="student_assessments",
+    )
 
     assessment_scheme = models.ForeignKey(
         "assessments.AssessmentScheme",
@@ -687,3 +687,181 @@ class TermResult(models.Model):
             f"{self.term} - "
             f"{self.average_score}"
         )
+
+#############################################
+class GradeScale(models.Model):
+    """
+    Defines a grading scale for a particular school tier.
+
+    Example:
+        Secondary School -> A1, B2, B3, C4, C5, C6,
+                            D7, E8, F9
+
+        Primary School -> Merit, Credit, Pass, etc.
+    """
+
+    name = models.CharField(
+        max_length=100,
+        unique=True,
+    )
+
+    code = models.CharField(
+        max_length=50,
+        unique=True,
+    )
+
+    description = models.TextField(
+        blank=True,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class GradeScaleItem(models.Model):
+    """
+    Individual grade within a grading scale.
+
+    Example:
+
+        A1 = 75 - 100
+        B2 = 70 - 74
+        B3 = 65 - 69
+        ...
+    """
+
+    grade_scale = models.ForeignKey(
+        GradeScale,
+        on_delete=models.CASCADE,
+        related_name="items",
+    )
+
+    grade = models.CharField(
+        max_length=20,
+    )
+
+    min_score = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+    )
+
+    max_score = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+    )
+
+    grade_point = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+
+    remark = models.CharField(
+        max_length=100,
+        blank=True,
+    )
+
+    display_order = models.PositiveSmallIntegerField(
+        default=1,
+    )
+
+    class Meta:
+        ordering = [
+            "-min_score",
+            "display_order",
+        ]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "grade_scale",
+                    "grade",
+                ],
+                name="unique_grade_in_scale",
+            ),
+        ]
+
+    def clean(self):
+        if self.min_score < 0:
+            raise ValidationError(
+                "Minimum score cannot be negative."
+            )
+
+        if self.max_score > 100:
+            raise ValidationError(
+                "Maximum score cannot exceed 100."
+            )
+
+        if self.min_score > self.max_score:
+            raise ValidationError(
+                "Minimum score cannot be greater than maximum score."
+            )
+
+    def __str__(self):
+        return (
+            f"{self.grade_scale.name} - "
+            f"{self.grade} "
+            f"({self.min_score}-{self.max_score})"
+        )
+
+########################################################
+@admin.register(GradeScale)
+class GradeScaleAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "code",
+        "is_active",
+    )
+
+    list_filter = (
+        "is_active",
+    )
+
+    search_fields = (
+        "name",
+        "code",
+    )
+
+
+@admin.register(GradeScaleItem)
+class GradeScaleItemAdmin(admin.ModelAdmin):
+    list_display = (
+        "grade_scale",
+        "grade",
+        "min_score",
+        "max_score",
+        "grade_point",
+        "remark",
+        "display_order",
+    )
+
+    list_filter = (
+        "grade_scale",
+        "grade",
+    )
+
+    search_fields = (
+        "grade",
+        "remark",
+    )
+
+    ordering = (
+        "grade_scale",
+        "-min_score",
+    )

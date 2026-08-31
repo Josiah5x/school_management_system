@@ -1,87 +1,21 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
 
-class Guardian(models.Model):
-    class Relationship(models.TextChoices):
-        FATHER = "father", "Father"
-        MOTHER = "mother", "Mother"
-        GUARDIAN = "guardian", "Guardian"
-        GRANDPARENT = "grandparent", "Grandparent"
-        OTHER = "other", "Other"
-
-    first_name = models.CharField(
-        max_length=100,
-    )
-
-    last_name = models.CharField(
-        max_length=100,
-    )
-
-    relationship = models.CharField(
-        max_length=20,
-        choices=Relationship.choices,
-    )
-
-    phone = models.CharField(
-        max_length=30,
-    )
-
-    alternate_phone = models.CharField(
-        max_length=30,
-        blank=True,
-    )
-
-    email = models.EmailField(
-        blank=True,
-    )
-
-    occupation = models.CharField(
-        max_length=150,
-        blank=True,
-    )
-
-    address = models.TextField(
-        blank=True,
-    )
-
-    is_primary = models.BooleanField(
-        default=False,
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
-
-    updated_at = models.DateTimeField(
-        auto_now=True,
-    )
-
-    @property
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}"
-
-    def __str__(self):
-        return self.full_name
-
-###############################################
-
 class Student(models.Model):
-
     class Gender(models.TextChoices):
         MALE = "male", "Male"
         FEMALE = "female", "Female"
 
-    class Status(models.TextChoices):
-        ACTIVE = "active", "Active"
-        INACTIVE = "inactive", "Inactive"
-        GRADUATED = "graduated", "Graduated"
-        WITHDRAWN = "withdrawn", "Withdrawn"
-        EXPELLED = "expelled", "Expelled"
+    school = models.ForeignKey(
+        "schools.School",
+        on_delete=models.CASCADE,
+        related_name="students",
+    )
 
     admission_number = models.CharField(
-        max_length=50,
-        unique=True,
+        max_length=30,
     )
 
     first_name = models.CharField(
@@ -107,7 +41,7 @@ class Student(models.Model):
         blank=True,
     )
 
-    place_of_birth = models.CharField(
+    birth_place = models.CharField(
         max_length=150,
         blank=True,
     )
@@ -127,55 +61,27 @@ class Student(models.Model):
         blank=True,
     )
 
-    religion = models.CharField(
-        max_length=100,
+    address = models.TextField(
         blank=True,
     )
 
-    blood_group = models.CharField(
-        max_length=10,
+    phone = models.CharField(
+        max_length=30,
         blank=True,
     )
 
-    genotype = models.CharField(
-        max_length=10,
+    email = models.EmailField(
         blank=True,
     )
 
     photo = models.ImageField(
         upload_to="students/photos/",
-        blank=True,
-        null=True,
-    )
-
-    status = models.CharField(
-        max_length=20,
-        choices=Status.choices,
-        default=Status.ACTIVE,
-    )
-
-    admission_date = models.DateField(
         null=True,
         blank=True,
     )
 
-    previous_school = models.CharField(
-        max_length=255,
-        blank=True,
-    )
-
-    previous_school_address = models.TextField(
-        blank=True,
-    )
-
-    notes = models.TextField(
-        blank=True,
-    )
-
-    guardians = models.ManyToManyField(
-        Guardian,
-        related_name="students",
-        blank=True,
+    is_active = models.BooleanField(
+        default=True,
     )
 
     created_at = models.DateTimeField(
@@ -192,31 +98,15 @@ class Student(models.Model):
             "first_name",
         ]
 
-        indexes = [
-            models.Index(
+        constraints = [
+            models.UniqueConstraint(
                 fields=[
-                    "last_name",
-                    "first_name",
+                    "school",
+                    "admission_number",
                 ],
-            ),
-            models.Index(
-                fields=[
-                    "status",
-                ],
+                name="unique_school_admission_number",
             ),
         ]
-
-    @property
-    def full_name(self):
-        return " ".join(
-            part
-            for part in [
-                self.first_name,
-                self.middle_name,
-                self.last_name,
-            ]
-            if part
-        )
 
     def __str__(self):
         return (
@@ -224,14 +114,153 @@ class Student(models.Model):
             f"{self.full_name}"
         )
 
-#############################################
-class Enrollment(models.Model):
+    @property
+    def full_name(self):
+        names = [
+            self.first_name,
+            self.middle_name,
+            self.last_name,
+        ]
 
+        return " ".join(
+            name for name in names if name
+        )
+
+##########################################
+class Guardian(models.Model):
+    class Relationship(models.TextChoices):
+        FATHER = "father", "Father"
+        MOTHER = "mother", "Mother"
+        GUARDIAN = "guardian", "Guardian"
+        UNCLE = "uncle", "Uncle"
+        AUNT = "aunt", "Aunt"
+        GRANDFATHER = "grandfather", "Grandfather"
+        GRANDMOTHER = "grandmother", "Grandmother"
+        OTHER = "other", "Other"
+
+    school = models.ForeignKey(
+        "schools.School",
+        on_delete=models.CASCADE,
+        related_name="guardians",
+    )
+
+    first_name = models.CharField(
+        max_length=100,
+    )
+
+    last_name = models.CharField(
+        max_length=100,
+    )
+
+    phone = models.CharField(
+        max_length=30,
+    )
+
+    alternative_phone = models.CharField(
+        max_length=30,
+        blank=True,
+    )
+
+    email = models.EmailField(
+        blank=True,
+    )
+
+    address = models.TextField(
+        blank=True,
+    )
+
+    occupation = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    relationship = models.CharField(
+        max_length=30,
+        choices=Relationship.choices,
+        default=Relationship.GUARDIAN,
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = [
+            "last_name",
+            "first_name",
+        ]
+
+    def __str__(self):
+        return self.full_name
+
+    @property
+    def full_name(self):
+        return (
+            f"{self.first_name} "
+            f"{self.last_name}"
+        )
+
+###########################################
+class StudentGuardian(models.Model):
+
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.CASCADE,
+        related_name="guardians",
+    )
+
+    guardian = models.ForeignKey(
+        Guardian,
+        on_delete=models.CASCADE,
+        related_name="students",
+    )
+
+    relationship = models.CharField(
+        max_length=30,
+        choices=Guardian.Relationship.choices,
+    )
+
+    is_primary = models.BooleanField(
+        default=False,
+    )
+
+    can_pickup = models.BooleanField(
+        default=True,
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "student",
+                    "guardian",
+                ],
+                name="unique_student_guardian",
+            ),
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.guardian} - "
+            f"{self.student}"
+        )
+
+###########################################
+class Enrollment(models.Model):
     class Status(models.TextChoices):
         ACTIVE = "active", "Active"
         COMPLETED = "completed", "Completed"
         TRANSFERRED = "transferred", "Transferred"
         WITHDRAWN = "withdrawn", "Withdrawn"
+        GRADUATED = "graduated", "Graduated"
 
     student = models.ForeignKey(
         Student,
@@ -242,21 +271,22 @@ class Enrollment(models.Model):
     session = models.ForeignKey(
         "academics.AcademicSession",
         on_delete=models.PROTECT,
-        related_name="student_enrollments",
+        related_name="enrollments",
+    )
+
+    academic_class = models.ForeignKey(
+        "academics.AcademicClass",
+        on_delete=models.PROTECT,
+        related_name="enrollments",
     )
 
     class_arm = models.ForeignKey(
         "academics.ClassArm",
         on_delete=models.PROTECT,
-        related_name="student_enrollments",
+        related_name="enrollments",
     )
 
     admission_date = models.DateField(
-        null=True,
-        blank=True,
-    )
-
-    roll_number = models.PositiveIntegerField(
         null=True,
         blank=True,
     )
@@ -267,11 +297,16 @@ class Enrollment(models.Model):
         default=Status.ACTIVE,
     )
 
-    is_current = models.BooleanField(
+    is_boarding = models.BooleanField(
         default=False,
     )
 
-    remarks = models.TextField(
+    boarding_house = models.CharField(
+        max_length=100,
+        blank=True,
+    )
+
+    remark = models.TextField(
         blank=True,
     )
 
@@ -286,8 +321,7 @@ class Enrollment(models.Model):
     class Meta:
         ordering = [
             "-session__start_date",
-            "class_arm",
-            "roll_number",
+            "student__last_name",
         ]
 
         constraints = [
@@ -300,89 +334,76 @@ class Enrollment(models.Model):
             ),
         ]
 
-        indexes = [
-            models.Index(
-                fields=[
-                    "session",
-                    "class_arm",
-                ],
-            ),
-            models.Index(
-                fields=[
-                    "student",
-                    "is_current",
-                ],
-            ),
-        ]
-
     def clean(self):
         if (
-            self.class_arm_id
-            and self.session_id
-            and self.class_arm.academic_class.school_id
-            != self.session.school_id
+            self.class_arm
+            and self.academic_class
+            and self.class_arm.academic_class_id
+            != self.academic_class_id
         ):
             raise ValidationError(
-                "Student enrollment class must belong "
-                "to the same school as the academic session."
+                "Class arm must belong to the selected academic class."
             )
 
     def __str__(self):
         return (
             f"{self.student.full_name} - "
-            f"{self.class_arm} - "
+            f"{self.academic_class.name} "
+            f"{self.class_arm.name} - "
             f"{self.session.name}"
         )
 
+###############################################
+
 ########################################
 
-class StudentAddress(models.Model):
-    student = models.OneToOneField(
-        Student,
-        on_delete=models.CASCADE,
-        related_name="address",
-    )
+# class StudentAddress(models.Model):
+#     studentss = models.OneToOneField(
+#         Student,
+#         on_delete=models.CASCADE,
+#         related_name="address",
+#     )
 
-    house_number = models.CharField(
-        max_length=30,
-        blank=True,
-    )
+#     house_number = models.CharField(
+#         max_length=30,
+#         blank=True,
+#     )
 
-    street = models.CharField(
-        max_length=150,
-        blank=True,
-    )
+#     street = models.CharField(
+#         max_length=150,
+#         blank=True,
+#     )
 
-    city = models.CharField(
-        max_length=100,
-        blank=True,
-    )
+#     city = models.CharField(
+#         max_length=100,
+#         blank=True,
+#     )
 
-    state = models.CharField(
-        max_length=100,
-        blank=True,
-    )
+#     state = models.CharField(
+#         max_length=100,
+#         blank=True,
+#     )
 
-    lga = models.CharField(
-        max_length=100,
-        blank=True,
-    )
+#     lga = models.CharField(
+#         max_length=100,
+#         blank=True,
+#     )
 
-    postal_code = models.CharField(
-        max_length=20,
-        blank=True,
-    )
+#     postal_code = models.CharField(
+#         max_length=20,
+#         blank=True,
+#     )
 
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
+#     created_at = models.DateTimeField(
+#         auto_now_add=True,
+#     )
 
-    updated_at = models.DateTimeField(
-        auto_now=True,
-    )
+#     updated_at = models.DateTimeField(
+#         auto_now=True,
+#     )
 
-    def __str__(self):
-        return f"Address - {self.student.full_name}"
+#     def __str__(self):
+#         return f"Address - {self.student.full_name}"
 
-#######################################################
+# #######################################################
 

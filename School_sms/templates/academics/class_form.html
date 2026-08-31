@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ title }} | School SMS
+{% endblock %}
+
+{% block page_title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-xl-8">
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white py-3">
+
+                <h5 class="mb-1">
+                    <i class="bi bi-building"></i>
+                    {{ title }}
+                </h5>
+
+                <small class="text-muted">
+                    Configure the class according to the Nigerian
+                    school structure.
+                </small>
+
+            </div>
+
+
+            <div class="card-body p-4">
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+
+                    {% for field in form %}
+
+                        <div class="mb-3">
+
+                            {% if field.field.widget.input_type == "checkbox" %}
+
+                                <div class="form-check">
+
+                                    {{ field }}
+
+                                    <label class="form-check-label">
+                                        {{ field.label }}
+                                    </label>
+
+                                </div>
+
+                            {% else %}
+
+                                <label class="form-label">
+                                    {{ field.label }}
+
+                                    {% if field.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+
+                                </label>
+
+                                {{ field }}
+
+                            {% endif %}
+
+
+                            {% if field.help_text %}
+
+                                <div class="form-text">
+                                    {{ field.help_text }}
+                                </div>
+
+                            {% endif %}
+
+
+                            {% for error in field.errors %}
+
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endfor %}
+
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+
+                        <a
+                            href="{% url 'academics:class_list' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Cancel
+                        </a>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary px-4"
+                        >
+                            <i class="bi bi-save"></i>
+                            Save Class
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ student.full_name }} | School SMS
+{% endblock %}
+
+{% block page_title %}
+Student Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between mb-4">
+
+        <div>
+
+            <a
+                href="{% url 'students:student_list' %}"
+                class="text-decoration-none"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Students
+            </a>
+
+        </div>
+
+        <div>
+
+            <a
+                href="{% url 'students:student_update' student.pk %}"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-pencil"></i>
+                Edit Student
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <div class="col-xl-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center p-4">
+
+                    {% if student.photo %}
+
+                        <img
+                            src="{{ student.photo.url }}"
+                            class="rounded-circle mb-3"
+                            width="130"
+                            height="130"
+                            style="object-fit:cover;"
+                        >
+
+                    {% else %}
+
+                        <div
+                            class="rounded-circle bg-secondary text-white mx-auto mb-3 d-flex align-items-center justify-content-center"
+                            style="width:130px;height:130px;"
+                        >
+
+                            <i class="bi bi-person fs-1"></i>
+
+                        </div>
+
+                    {% endif %}
+
+                    <h4>
+                        {{ student.full_name }}
+                    </h4>
+
+                    <p class="text-muted">
+                        {{ student.admission_number }}
+                    </p>
+
+                    {% if student.is_active %}
+                        <span class="badge text-bg-success">
+                            Active
+                        </span>
+                    {% else %}
+                        <span class="badge text-bg-secondary">
+                            Inactive
+                        </span>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-xl-8">
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-white">
+                    <strong>Student Information</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted">
+                                Full Name
+                            </small>
+
+                            <div>
+                                {{ student.full_name }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted">
+                                Gender
+                            </small>
+
+                            <div>
+                                {{ student.get_gender_display }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted">
+                                Date of Birth
+                            </small>
+
+                            <div>
+                                {{ student.date_of_birth|default:"-" }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted">
+                                State of Origin
+                            </small>
+
+                            <div>
+                                {{ student.state_of_origin|default:"-" }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted">
+                                LGA
+                            </small>
+
+                            <div>
+                                {{ student.lga_of_origin|default:"-" }}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted">
+                                Phone
+                            </small>
+
+                            <div>
+                                {{ student.phone|default:"-" }}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <small class="text-muted">
+                                Address
+                            </small>
+
+                            <div>
+                                {{ student.address|default:"-" }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-header bg-white d-flex justify-content-between">
+
+                    <strong>
+                        Enrollment History
+                    </strong>
+
+                    <a
+                        href="{% url 'students:enrollment_create' %}"
+                        class="btn btn-sm btn-primary"
+                    >
+                        Enroll
+                    </a>
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="table mb-0">
+
+                        <thead>
+
+                            <tr>
+                                <th>Session</th>
+                                <th>Class</th>
+                                <th>Arm</th>
+                                <th>Status</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for enrollment in student.enrollments.all %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ enrollment.session.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ enrollment.academic_class.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ enrollment.class_arm.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ enrollment.get_status_display }}
+                                    </td>
+
+                                </tr>
+
+                            {% empty %}
+
+                                <tr>
+                                    <td
+                                        colspan="4"
+                                        class="text-center text-muted py-4"
+                                    >
+                                        No enrollment history.
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white d-flex justify-content-between">
+
+                    <strong>
+                        Guardians
+                    </strong>
+
+                    <a
+                        href="{% url 'students:student_guardian_create' student.pk %}"
+                        class="btn btn-sm btn-primary"
+                    >
+                        Add Guardian
+                    </a>
+
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="table mb-0">
+
+                        <thead>
+
+                            <tr>
+                                <th>Name</th>
+                                <th>Relationship</th>
+                                <th>Phone</th>
+                                <th>Primary</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for relation in student.guardians.all %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ relation.guardian.full_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ relation.get_relationship_display }}
+                                    </td>
+
+                                    <td>
+                                        {{ relation.guardian.phone }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if relation.is_primary %}
+
+                                            <span class="badge text-bg-success">
+                                                Yes
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge text-bg-secondary">
+                                                No
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="4"
+                                        class="text-center text-muted py-4"
+                                    >
+                                        No guardians linked.
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

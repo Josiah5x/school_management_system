@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ subject.name }} | School SMS
+{% endblock %}
+
+{% block page_title %}
+{{ subject.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-xl-8">
+
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body p-4">
+
+                <div class="d-flex justify-content-between">
+
+                    <div>
+
+                        <span class="badge text-bg-dark mb-2">
+                            {{ subject.code }}
+                        </span>
+
+                        <h3>
+                            {{ subject.name }}
+                        </h3>
+
+                    </div>
+
+
+                    <div>
+
+                        <a
+                            href="{% url 'academics:subject_update' subject.pk %}"
+                            class="btn btn-outline-primary"
+                        >
+                            <i class="bi bi-pencil"></i>
+                            Edit
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+                <hr>
+
+
+                <div class="row g-4">
+
+                    <div class="col-md-4">
+
+                        <small class="text-muted">
+                            Type
+                        </small>
+
+                        <div class="mt-1">
+
+                            {% if subject.is_core %}
+
+                                <span class="badge text-bg-primary">
+                                    Core
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge text-bg-secondary">
+                                    Elective
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <small class="text-muted">
+                            Practical
+                        </small>
+
+                        <div class="mt-1">
+
+                            {% if subject.is_practical %}
+
+                                <span class="badge text-bg-warning">
+                                    Yes
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge text-bg-light text-dark">
+                                    No
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <small class="text-muted">
+                            Status
+                        </small>
+
+                        <div class="mt-1">
+
+                            {% if subject.is_active %}
+
+                                <span class="badge text-bg-success">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge text-bg-secondary">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <hr>
+
+
+                <h6>
+                    Description
+                </h6>
+
+                {% if subject.description %}
+
+                    <p class="text-muted">
+                        {{ subject.description }}
+                    </p>
+
+                {% else %}
+
+                    <p class="text-muted">
+                        No description provided.
+                    </p>
+
+                {% endif %}
+
+
+                <div class="mt-4">
+
+                    <a
+                        href="{% url 'academics:subject_list' %}"
+                        class="btn btn-outline-secondary"
+                    >
+                        <i class="bi bi-arrow-left"></i>
+                        Back to Subjects
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

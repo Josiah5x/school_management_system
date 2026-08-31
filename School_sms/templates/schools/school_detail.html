@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ school.name }} | School SMS
+{% endblock %}
+
+{% block page_title %}
+School Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="row g-4">
+
+    <!-- SCHOOL CARD -->
+
+    <div class="col-lg-4 pt-4">
+
+        <div class="card text-center">
+
+            <div class="card-body p-4">
+
+                {% if school.logo %}
+
+                    <img
+                        src="{{ school.logo.url }}"
+                        alt="{{ school.name }}"
+                        class="school-logo-preview mb-3"
+                    >
+
+                {% else %}
+
+                    <div class="school-logo-placeholder mx-auto mb-3">
+
+                        <i class="bi bi-building"></i>
+
+                    </div>
+
+                {% endif %}
+
+                <h3 class="fw-bold">
+                    {{ school.name }}
+                </h3>
+
+                {% if school.short_name %}
+
+                    <span class="badge text-bg-primary">
+                        {{ school.short_name }}
+                    </span>
+
+                {% endif %}
+
+                {% if school.motto %}
+
+                    <p class="text-muted fst-italic mt-3">
+                        "{{ school.motto }}"
+                    </p>
+
+                {% endif %}
+
+                {% if school.is_active %}
+
+                    <span class="badge text-bg-success">
+                        Active
+                    </span>
+
+                {% else %}
+
+                    <span class="badge text-bg-danger">
+                        Inactive
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% if school.principal_name %}
+
+            <div class="card mt-4">
+
+                <div class="card-header bg-white">
+
+                    <strong>
+                        <i class="bi bi-person-badge"></i>
+                        Principal
+                    </strong>
+
+                </div>
+
+                <div class="card-body text-center">
+
+                    <h5>
+                        {{ school.principal_name }}
+                    </h5>
+
+                    {% if school.principal_signature %}
+
+                        <img
+                            src="{{ school.principal_signature.url }}"
+                            alt="Principal Signature"
+                            class="signature-preview mt-3"
+                        >
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- DETAILS -->
+
+    <div class="col-lg-8 pt-4">
+
+        <div class="card mb-4">
+
+            <div class="card-header bg-white d-flex justify-content-between">
+
+                <strong>
+                    School Information
+                </strong>
+
+                <a
+                    href="{% url 'schools:update' %}"
+                    class="btn btn-sm btn-outline-primary"
+                >
+                    <i class="bi bi-pencil"></i>
+                    Edit
+                </a>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted d-block">
+                            Address
+                        </small>
+
+                        <strong>
+                            {{ school.address }}
+                        </strong>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted d-block">
+                            Phone
+                        </small>
+
+                        <strong>
+                            {{ school.phone|default:"Not provided" }}
+                        </strong>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted d-block">
+                            Email
+                        </small>
+
+                        <strong>
+                            {{ school.email|default:"Not provided" }}
+                        </strong>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted d-block">
+                            Website
+                        </small>
+
+                        {% if school.website %}
+
+                            <a
+                                href="{{ school.website }}"
+                                target="_blank"
+                            >
+                                {{ school.website }}
+                            </a>
+
+                        {% else %}
+
+                            <strong>
+                                Not provided
+                            </strong>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- SETTINGS -->
+
+        <div class="card">
+
+            <div class="card-header bg-white d-flex justify-content-between">
+
+                <strong>
+                    <i class="bi bi-sliders"></i>
+                    School Settings
+                </strong>
+
+                <a
+                    href="{% url 'schools:settings' %}"
+                    class="btn btn-sm btn-outline-primary"
+                >
+                    <i class="bi bi-gear"></i>
+                    Configure
+                </a>
+
+            </div>
+
+            <div class="card-body">
+
+                {% if school_settings %}
+
+                    <div class="row">
+
+                        <div class="col-md-4 mb-3">
+
+                            <small class="text-muted d-block">
+                                Country
+                            </small>
+
+                            <strong>
+                                {{ school_settings.country }}
+                            </strong>
+
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+
+                            <small class="text-muted d-block">
+                                State
+                            </small>
+
+                            <strong>
+                                {{ school_settings.state|default:"-" }}
+                            </strong>
+
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+
+                            <small class="text-muted d-block">
+                                LGA
+                            </small>
+
+                            <strong>
+                                {{ school_settings.lga|default:"-" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <p>
+                                {% if school_settings.grading_enabled %}
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                {% endif %}
+
+                                Grading
+                            </p>
+
+                            <p>
+                                {% if school_settings.result_position_enabled %}
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                {% endif %}
+
+                                Result Position
+                            </p>
+
+                            <p>
+                                {% if school_settings.show_class_average %}
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                {% endif %}
+
+                                Class Average
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <p>
+                                {% if school_settings.show_student_average %}
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                {% endif %}
+
+                                Student Average
+                            </p>
+
+                            <p>
+                                {% if school_settings.show_affective_domain %}
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                {% endif %}
+
+                                Affective Domain
+                            </p>
+
+                            <p>
+                                {% if school_settings.show_psychomotor_domain %}
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill text-danger"></i>
+                                {% endif %}
+
+                                Psychomotor Domain
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="alert alert-warning mb-0">
+
+                        School settings have not been configured.
+
+                        <a
+                            href="{% url 'schools:settings' %}"
+                            class="alert-link"
+                        >
+                            Configure now
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

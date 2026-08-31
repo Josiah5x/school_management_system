@@ -209,7 +209,6 @@ def determine_student_grade(
         scale,
     )
 
-
 ###########################################
 def get_student_enrollment_for_term(
     student,
@@ -226,7 +225,6 @@ def get_student_enrollment_for_term(
     ).get(
         session=term.session,
     )
-
 
 #########################################
 def calculate_subject_result_data(
@@ -486,9 +484,7 @@ def save_trait_assessment(
 
     return assessment
 
-
 ####################################################
-
 
 def get_student_trait_assessments(
     student,

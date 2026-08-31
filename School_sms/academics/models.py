@@ -390,10 +390,10 @@ class TeacherSubjectAssignment(models.Model):
 
     def clean(self):
         if self.teacher.role not in [
-            "teacher",
-            "hod",
-            "principal",
-            "vice_principal",
+            User.Role.TEACHER,
+            User.Role.HOD,
+            User.Role.PRINCIPAL,
+            User.Role.VICE_PRINCIPAL,
         ]:
             raise ValidationError(
                 "Only academic staff can be assigned subjects."

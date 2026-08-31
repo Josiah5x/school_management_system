@@ -1,3 +1,4 @@
+from django.core.validators import FileExtensionValidator
 from django.db import models
 
 
@@ -30,6 +31,16 @@ class School(models.Model):
         upload_to="schools/logos/",
         blank=True,
         null=True,
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=[
+                    "jpg",
+                    "jpeg",
+                    "png",
+                    "webp",
+                ]
+            )
+        ],
     )
 
     motto = models.CharField(
@@ -46,12 +57,32 @@ class School(models.Model):
         upload_to="schools/signatures/",
         blank=True,
         null=True,
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=[
+                    "jpg",
+                    "jpeg",
+                    "png",
+                    "webp",
+                ]
+            )
+        ],
     )
 
     principal_stamp = models.ImageField(
         upload_to="schools/stamps/",
         blank=True,
         null=True,
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=[
+                    "jpg",
+                    "jpeg",
+                    "png",
+                    "webp",
+                ]
+            )
+        ],
     )
 
     is_active = models.BooleanField(
@@ -71,6 +102,7 @@ class School(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class SchoolSettings(models.Model):
     school = models.OneToOneField(

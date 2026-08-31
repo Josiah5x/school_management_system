@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Profile | School SMS
+{% endblock %}
+
+{% block page_title %}
+My Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="row g-4">
+
+    <div class="col-lg-4">
+
+        <div class="card text-center">
+
+            <div class="card-body p-4">
+
+                {% if request.user.profile_photo %}
+
+                    <img
+                        src="{{ request.user.profile_photo.url }}"
+                        class="student-avatar mb-3"
+                        alt="{{ request.user.display_name }}"
+                    >
+
+                {% else %}
+
+                    <div class="student-avatar avatar-placeholder mx-auto mb-3">
+
+                        <i class="bi bi-person"></i>
+
+                    </div>
+
+                {% endif %}
+
+                <h4>
+                    {{ request.user.display_name }}
+                </h4>
+
+                <span class="badge text-bg-primary mb-3">
+                    {{ request.user.get_role_display }}
+                </span>
+
+                <p class="text-muted mb-0">
+                    {{ request.user.email }}
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="card mt-4">
+
+            <div class="card-body">
+
+                <a
+                    href="{% url 'accounts:change_password' %}"
+                    class="btn btn-outline-primary w-100"
+                >
+                    <i class="bi bi-key"></i>
+                    Change Password
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-8">
+
+        <div class="card">
+
+            <div class="card-header bg-white">
+
+                <strong>
+                    Personal Information
+                </strong>
+
+            </div>
+
+            <div class="card-body">
+
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                >
+
+                    {% csrf_token %}
+
+                    <div class="row">
+
+                        {% for field in form %}
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    {{ field.label }}
+                                </label>
+
+                                {{ field }}
+
+                                {% for error in field.errors %}
+
+                                    <div class="text-danger small">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-save"></i>
+                        Save Changes
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

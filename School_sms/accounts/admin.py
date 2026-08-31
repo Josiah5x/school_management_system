@@ -7,15 +7,44 @@ from .models import User
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
 
+    list_display = (
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "role",
+        "is_active",
+        "is_verified",
+    )
+
+    list_filter = (
+        "role",
+        "is_active",
+        "is_verified",
+        "is_staff",
+    )
+
+    search_fields = (
+        "username",
+        "first_name",
+        "last_name",
+        "email",
+        "staff_id",
+        "phone",
+    )
+
     fieldsets = UserAdmin.fieldsets + (
         (
             "School Information",
             {
                 "fields": (
                     "role",
+                    "staff_id",
                     "phone",
                     "profile_photo",
-                    "is_active_staff",
+                    "address",
+                    "date_of_birth",
+                    "is_verified",
                 ),
             },
         ),
@@ -26,34 +55,13 @@ class CustomUserAdmin(UserAdmin):
             "School Information",
             {
                 "fields": (
+                    "first_name",
+                    "last_name",
                     "email",
                     "role",
                     "phone",
-                    "profile_photo",
-                    "is_active_staff",
+                    "staff_id",
                 ),
             },
         ),
-    )
-
-    list_display = (
-        "username",
-        "email",
-        "first_name",
-        "last_name",
-        "role",
-        "is_active",
-    )
-
-    list_filter = (
-        "role",
-        "is_active",
-        "is_staff",
-    )
-
-    search_fields = (
-        "username",
-        "email",
-        "first_name",
-        "last_name",
     )

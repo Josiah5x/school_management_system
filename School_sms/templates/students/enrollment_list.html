@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}
+Enrollments | School SMS
+{% endblock %}
+
+{% block page_title %}
+Enrollments
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between mb-4">
+
+        <div>
+            <h4>
+                Student Enrollment
+            </h4>
+
+            <p class="text-muted">
+                Manage students across academic sessions and class arms.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'students:enrollment_create' %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-plus-lg"></i>
+            Enroll Student
+        </a>
+
+    </div>
+
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Admission No.</th>
+                        <th>Session</th>
+                        <th>Class</th>
+                        <th>Arm</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for enrollment in enrollments %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{% url 'students:student_detail' enrollment.student.pk %}"
+                                    class="text-decoration-none"
+                                >
+                                    {{ enrollment.student.full_name }}
+                                </a>
+
+                            </td>
+
+                            <td>
+                                {{ enrollment.student.admission_number }}
+                            </td>
+
+                            <td>
+                                {{ enrollment.session.name }}
+                            </td>
+
+                            <td>
+                                {{ enrollment.academic_class.name }}
+                            </td>
+
+                            <td>
+                                {{ enrollment.class_arm.name }}
+                            </td>
+
+                            <td>
+
+                                {% if enrollment.status == "active" %}
+
+                                    <span class="badge text-bg-success">
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge text-bg-secondary">
+                                        {{ enrollment.get_status_display }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="{% url 'students:enrollment_update' enrollment.pk %}"
+                                    class="btn btn-sm btn-outline-primary"
+                                >
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="text-center py-5 text-muted"
+                            >
+                                No enrollments found.
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

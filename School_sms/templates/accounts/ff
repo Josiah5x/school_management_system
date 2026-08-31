@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}My Profile | School SMS{% endblock %}
+{% block page_title %} Login {% endblock %}
+{% block content %}
+
+<body class="auth-page">
+
+<div class="container">
+    <div class="row justify-content-center">
+
+        <div class="col-md-6 col-lg-4">
+
+            <div class="auth-card">
+
+                <div class="text-center mb-4">
+
+                    <div class="auth-logo mb-3">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+
+                    <h3 class="fw-bold">
+                        School SMS
+                    </h3>
+
+                    <p class="text-muted">
+                        School Management System
+                    </p>
+
+                </div>
+
+                {% if form.non_field_errors %}
+
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i>
+
+                        Invalid username or password.
+                    </div>
+
+                {% endif %}
+
+                <form
+                    method="post"
+                    novalidate
+                >
+
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Username
+                        </label>
+
+                        {{ form.username }}
+
+                        {% for error in form.username.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Password
+                        </label>
+
+                        {{ form.password }}
+
+                        {% for error in form.password.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-4">
+
+                        <div class="form-check">
+
+                            <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="remember"
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="remember"
+                            >
+                                Remember me
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100 py-2"
+                    >
+
+                        <i class="bi bi-box-arrow-in-right"></i>
+
+                        Sign In
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ title }} | School SMS
+{% endblock %}
+
+{% block page_title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center p-4">
+
+    <div class="col-xl-10">
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+        >
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <!-- BASIC INFORMATION -->
+
+            <div class="card mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="mb-1">
+                        <i class="bi bi-building"></i>
+                        School Information
+                    </h5>
+
+                    <small class="text-muted">
+                        Basic information about the school.
+                    </small>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-md-8 mb-3">
+
+                            <label class="form-label">
+                                School Name
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            {{ form.name }}
+
+                            {% for error in form.name.errors %}
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+
+                            <label class="form-label">
+                                Short Name
+                            </label>
+
+                            {{ form.short_name }}
+
+                        </div>
+
+                        <div class="col-12 mb-3">
+
+                            <label class="form-label">
+                                Address
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            {{ form.address }}
+
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+
+                            <label class="form-label">
+                                Phone
+                            </label>
+
+                            {{ form.phone }}
+
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+
+                            <label class="form-label">
+                                Email
+                            </label>
+
+                            {{ form.email }}
+
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+
+                            <label class="form-label">
+                                Website
+                            </label>
+
+                            {{ form.website }}
+
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+
+                            <label class="form-label">
+                                School Motto
+                            </label>
+
+                            {{ form.motto }}
+
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+
+                            <label class="form-label">
+                                Status
+                            </label>
+
+                            <div class="form-check mt-2">
+
+                                {{ form.is_active }}
+
+                                <label class="form-check-label">
+                                    School is active
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- LOGO -->
+
+            <div class="card mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="mb-1">
+                        <i class="bi bi-image"></i>
+                        School Branding
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row align-items-center">
+
+                        <div class="col-md-4 text-center">
+
+                            {% if school.logo %}
+
+                                <img
+                                    src="{{ school.logo.url }}"
+                                    alt="School Logo"
+                                    class="img-fluid school-logo-preview"
+                                >
+
+                            {% else %}
+
+                                <div class="school-logo-placeholder">
+
+                                    <i class="bi bi-building"></i>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div class="col-md-8">
+
+                            <label class="form-label">
+                                School Logo
+                            </label>
+
+                            {{ form.logo }}
+
+                            {% if form.logo.help_text %}
+                                <div class="form-text">
+                                    {{ form.logo.help_text }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- PRINCIPAL -->
+
+            <div class="card mb-4">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="mb-1">
+                        <i class="bi bi-person-badge"></i>
+                        Principal Information
+                    </h5>
+
+                    <small class="text-muted">
+                        Information used on official report cards.
+                    </small>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-4">
+
+                        <label class="form-label">
+                            Principal Name
+                        </label>
+
+                        {{ form.principal_name }}
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Principal Signature
+                            </label>
+
+                            {{ form.principal_signature }}
+
+                            <div class="form-text">
+                                Used when generating report cards.
+                            </div>
+
+                            {% if school.principal_signature %}
+
+                                <div class="mt-3">
+
+                                    <img
+                                        src="{{ school.principal_signature.url }}"
+                                        alt="Principal Signature"
+                                        class="signature-preview"
+                                    >
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label">
+                                Principal Stamp
+                            </label>
+
+                            {{ form.principal_stamp }}
+
+                            <div class="form-text">
+                                Official school/principal stamp.
+                            </div>
+
+                            {% if school.principal_stamp %}
+
+                                <div class="mt-3">
+
+                                    <img
+                                        src="{{ school.principal_stamp.url }}"
+                                        alt="Principal Stamp"
+                                        class="stamp-preview"
+                                    >
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ACTIONS -->
+
+            <div class="d-flex justify-content-end gap-2 mb-5">
+
+                <a
+                    href="{% url 'schools:detail' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary px-4"
+                >
+
+                    <i class="bi bi-save"></i>
+
+                    Save School
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Trait Assessment | School SMS{% endblock %}
+{% block page_title %}Affective & Psychomotor Assessment{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="card-header bg-white"><strong>{{ student.full_name }}</strong> · {{ term }}</div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% for category, items in grouped_traits.items %}
+                <h5 class="section-title mt-3">{{ category|title }} Domain</h5>
+                <div class="row g-3 mb-4">
+                {% for item in items %}
+                    <div class="col-md-6">
+                        <label class="form-label">{{ item.trait.name }}</label>
+                        <select name="trait_{{ item.trait.pk }}" class="form-select">
+                            <option value="">Select rating</option>
+                            <option value="5" {% if item.rating == 5 %}selected{% endif %}>5 - Excellent</option>
+                            <option value="4" {% if item.rating == 4 %}selected{% endif %}>4 - Very Good</option>
+                            <option value="3" {% if item.rating == 3 %}selected{% endif %}>3 - Good</option>
+                            <option value="2" {% if item.rating == 2 %}selected{% endif %}>2 - Fair</option>
+                            <option value="1" {% if item.rating == 1 %}selected{% endif %}>1 - Poor</option>
+                        </select>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endfor %}
+            <button class="btn btn-primary">Save Trait Assessment</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

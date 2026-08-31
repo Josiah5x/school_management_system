@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Enter Assessment
+{% endblock %}
+
+{% block page_title %}
+    Assessment Entry
+{% endblock %}
+
+
+{% block content %}
+
+<div class="card">
+
+    <div class="card-body">
+
+        <!-- HEADER -->
+
+        <div class="row mb-4">
+
+            <div class="col-md-3">
+
+                <small class="text-muted">
+                    Student
+                </small>
+
+                <h6>
+                    {{ student.full_name }}
+                </h6>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <small class="text-muted">
+                    Admission Number
+                </small>
+
+                <h6>
+                    {{ student.admission_number }}
+                </h6>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <small class="text-muted">
+                    Class
+                </small>
+
+                <h6>
+                    {{ enrollment.class_arm }}
+                </h6>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <small class="text-muted">
+                    Term
+                </small>
+
+                <h6>
+                    {{ term }}
+                </h6>
+
+            </div>
+
+        </div>
+
+
+        <hr>
+
+
+        <!-- SUBJECT -->
+
+        <div class="mb-4">
+
+            <h5>
+                {{ class_subject.subject.name }}
+            </h5>
+
+            <span class="badge bg-secondary">
+                {{ class_subject.subject.code }}
+            </span>
+
+        </div>
+
+
+        <!-- ASSESSMENT FORM -->
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                Assessment
+                            </th>
+
+                            <th>
+                                Maximum Score
+                            </th>
+
+                            <th>
+                                Student Score
+                            </th>
+
+                            <th>
+                                Percentage
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for component in components %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    {{ component.component.name }}
+                                </strong>
+
+                                {% if component.component.component_type == "ca1" %}
+
+                                    <span class="badge bg-info">
+                                        CA1
+                                    </span>
+
+                                {% elif component.component.component_type == "ca2" %}
+
+                                    <span class="badge bg-info">
+                                        CA2
+                                    </span>
+
+                                {% elif component.component.component_type == "practical" %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Practical
+                                    </span>
+
+                                {% elif component.component.component_type == "exam" %}
+
+                                    <span class="badge bg-primary">
+                                        Examination
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ component.maximum_score }}
+
+                            </td>
+
+
+                            <td>
+
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    min="0"
+                                    max="{{ component.maximum_score }}"
+                                    name="component_{{ component.id }}"
+                                    value="{{ scores|get_item:component.id|default:'' }}"
+                                    class="form-control score-input"
+                                    required
+                                >
+
+                            </td>
+
+
+                            <td>
+
+                                <span
+                                    class="percentage"
+                                    data-max="{{ component.maximum_score }}"
+                                >
+                                    -
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+
+                    <tfoot>
+
+                        <tr class="table-light">
+
+                            <th>
+                                TOTAL
+                            </th>
+
+                            <th>
+                                100
+                            </th>
+
+                            <th>
+
+                                <strong id="totalScore">
+                                    0.00
+                                </strong>
+
+                            </th>
+
+                            <th>
+
+                                <strong id="percentageScore">
+                                    0%
+                                </strong>
+
+                            </th>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div class="d-flex justify-content-end gap-2">
+
+                <a
+                    href="javascript:history.back()"
+                    class="btn btn-outline-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-check-circle me-1"></i>
+                    Save Assessment
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const inputs = document.querySelectorAll(
+            ".score-input"
+        );
+
+        const totalElement =
+            document.getElementById(
+                "totalScore"
+            );
+
+        const percentageElement =
+            document.getElementById(
+                "percentageScore"
+            );
+
+
+        function calculateTotal() {
+
+            let total = 0;
+            let maximum = 0;
+
+
+            inputs.forEach(
+                function (input) {
+
+                    const value =
+                        parseFloat(input.value)
+                        || 0;
+
+                    const max =
+                        parseFloat(input.max)
+                        || 0;
+
+                    total += value;
+                    maximum += max;
+
+                }
+            );
+
+
+            totalElement.textContent =
+                total.toFixed(2);
+
+
+            if (maximum > 0) {
+
+                const percentage =
+                    (total / maximum) * 100;
+
+                percentageElement.textContent =
+                    percentage.toFixed(2) + "%";
+
+            }
+
+        }
+
+
+        inputs.forEach(
+            function (input) {
+
+                input.addEventListener(
+                    "input",
+                    calculateTotal
+                );
+
+            }
+        );
+
+
+        calculateTotal();
+
+    }
+);
+
+</script>
+
+{% endblock %}

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    ##########
     "accounts",
     "schools",
     "academics",
@@ -50,6 +51,8 @@ INSTALLED_APPS = [
     "finance",
     "communication",
 ]
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -141,3 +144,13 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+#AUTH USER
+
+LOGIN_URL = "accounts:login"
+
+LOGIN_REDIRECT_URL = "dashboard:dashboard"
+
+LOGOUT_REDIRECT_URL = "accounts:login"
+
+

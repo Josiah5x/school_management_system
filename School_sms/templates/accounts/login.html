@@ -1,0 +1,470 @@
+{% extends "base.html" %}
+{% block title %}My Profile | School SMS{% endblock %}
+{% block page_title %} Login {% endblock %}
+{% block content %}
+
+
+<style>
+
+body {
+    min-height: 100vh;
+    background: #f5f7fb;
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+.auth-wrapper {
+    min-height: 100vh;
+}
+
+.auth-left {
+    background: linear-gradient(145deg, #0f172a, #1e3a8a);
+    color: white;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-left::before {
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    top: -100px;
+    right: -100px;
+}
+
+.auth-left::after {
+    content: "";
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    bottom: -80px;
+    left: -80px;
+}
+
+.school-brand {
+    position: relative;
+    z-index: 2;
+}
+
+.school-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 26px;
+}
+
+.auth-feature {
+    position: relative;
+    z-index: 2;
+}
+
+.feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.feature-icon {
+    min-width: 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.auth-right {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 480px;
+    border: 0;
+    border-radius: 20px;
+    box-shadow: 0 15px 45px rgba(15, 23, 42, 0.08);
+}
+
+.auth-card .card-body {
+    padding: 40px;
+}
+
+.form-control,
+.form-select {
+    min-height: 50px;
+    border-radius: 10px;
+    border: 1px solid #dce1e8;
+    padding: 12px 15px;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.12);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 7px;
+}
+
+.btn-primary {
+    min-height: 50px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.auth-logo {
+    width: 54px;
+    height: 54px;
+    border-radius: 15px;
+    background: #2563eb;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.role-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 15px;
+    background: #f8fafc;
+}
+
+.password-help {
+    font-size: 12px;
+    color: #64748b;
+}
+
+@media (max-width: 991px) {
+
+    .auth-left {
+        min-height: auto;
+        padding: 50px 30px;
+    }
+
+    .auth-right {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .auth-card .card-body {
+        padding: 25px;
+    }
+}
+
+</style>
+<body>
+
+
+<div class="container-fluid p-0">
+
+    <div class="row g-0 auth-wrapper">
+
+        <!-- LEFT SIDE -->
+
+        <div class="col-lg-6 auth-left">
+
+            <div class="p-5 h-100 d-flex flex-column">
+
+                <div class="school-brand">
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <div class="school-icon">
+
+                            <i class="bi bi-mortarboard-fill"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h4 class="mb-0 fw-bold">
+                                School SMS
+                            </h4>
+
+                            <small class="text-white-50">
+                                School Management System
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="auth-feature my-auto">
+
+                    <h1 class="display-5 fw-bold mb-3">
+                        Manage your school
+                        <br>
+                        <span class="text-info">
+                            smarter.
+                        </span>
+                    </h1>
+
+                    <p class="text-white-50 fs-5 mb-5">
+
+                        A complete platform for managing
+                        students, teachers, results,
+                        attendance and school finances.
+
+                    </p>
+
+
+                    <div class="feature-item">
+
+                        <div class="feature-icon">
+
+                            <i class="bi bi-people-fill"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h6 class="fw-bold mb-1">
+                                Student Management
+                            </h6>
+
+                            <p class="text-white-50 small mb-0">
+                                Manage student records,
+                                guardians and enrollment.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature-item">
+
+                        <div class="feature-icon">
+
+                            <i class="bi bi-bar-chart-fill"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h6 class="fw-bold mb-1">
+                                Results & Assessments
+                            </h6>
+
+                            <p class="text-white-50 small mb-0">
+                                Record CA, examinations,
+                                grades and report cards.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="feature-item">
+
+                        <div class="feature-icon">
+
+                            <i class="bi bi-shield-check"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h6 class="fw-bold mb-1">
+                                Secure Access
+                            </h6>
+
+                            <p class="text-white-50 small mb-0">
+                                Role-based access keeps
+                                school information secure.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="text-white-50 small">
+
+                    © {% now "Y" %} School SMS.
+                    All rights reserved.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RIGHT SIDE -->
+
+        <div class="col-lg-6 auth-right">
+
+            <div class="card auth-card">
+
+                <div class="card-body">
+
+                    <div class="text-center mb-4">
+
+                        <div class="auth-logo mx-auto mb-3">
+
+                            <i class="bi bi-mortarboard-fill"></i>
+
+                        </div>
+
+                        <h3 class="fw-bold mb-1">
+                            Welcome back
+                        </h3>
+
+                        <p class="text-muted mb-0">
+                            Sign in to your school account
+                        </p>
+
+                    </div>
+
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            {{ form.non_field_errors }}
+
+                        </div>
+
+                    {% endif %}
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Username
+                            </label>
+
+                            {{ form.username }}
+
+                            {% for error in form.username.errors %}
+
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Password
+                            </label>
+
+                            {{ form.password }}
+
+                            {% for error in form.password.errors %}
+
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100"
+                        >
+                            Login
+                        </button>
+
+                    </form>                    <div class="text-center mt-4">
+
+                        <span class="text-muted">
+                            Don't have an account?
+                        </span>
+
+                        <a
+                            href="{% url 'accounts:register' %}"
+                            class="fw-semibold text-decoration-none"
+                        >
+                            Create account
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function togglePassword() {
+
+    const password =
+        document.getElementById("id_password");
+
+    const icon =
+        document.getElementById("passwordIcon");
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        icon.classList.remove("bi-eye");
+
+        icon.classList.add("bi-eye-slash");
+
+    } else {
+
+        password.type = "password";
+
+        icon.classList.remove("bi-eye-slash");
+
+        icon.classList.add("bi-eye");
+
+    }
+
+}
+
+</script>
+
+{% endblock %}
+
+
+
