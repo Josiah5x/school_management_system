@@ -4,178 +4,115 @@
 Create Account | School SMS
 {% endblock %}
 
-{% block page_title %}
-Create Account
-{% endblock %}
-
 {% block content %}
+
+<div class="container py-5">
 
 <div class="row justify-content-center">
 
-    <div class="col-lg-9">
+    <div class="col-lg-8 col-xl-7">
 
-        <div class="card">
+        <div class="card border-0 shadow">
 
-            <div class="card-header bg-white py-3">
+            <div class="card-body p-4 p-md-5">
 
-                <h5 class="mb-1">
-                    <i class="bi bi-person-plus"></i>
-                    Create User Account
-                </h5>
+                <div class="text-center mb-4">
 
-                <small class="text-muted">
-                    Register a staff member, student or parent.
-                </small>
+                    <h3 class="fw-bold">
+                        Create Account
+                    </h3>
 
-            </div>
+                    <p class="text-muted">
+                        Register your School SMS account.
+                    </p>
 
-            <div class="card-body">
+                </div>
 
-                <form method="post">
+
+                {% if form.non_field_errors %}
+
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+
+                {% endif %}
+
+
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                >
 
                     {% csrf_token %}
 
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors }}
-                        </div>
-                    {% endif %}
 
-                    <div class="row">
+                    {% for field in form %}
 
-                        <div class="col-md-6 mb-3">
+                        <div class="mb-3">
 
-                            <label class="form-label">
-                                Username
+                            <label
+                                for="{{ field.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ field.label }}
+
+                                {% if field.field.required %}
+                                    <span class="text-danger">
+                                        *
+                                    </span>
+                                {% endif %}
+
                             </label>
 
-                            {{ form.username }}
+                            {{ field }}
 
-                            {{ form.username.errors }}
+                            {% if field.help_text %}
 
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                Email
-                            </label>
-
-                            {{ form.email }}
-
-                            {{ form.email.errors }}
-
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                First Name
-                            </label>
-
-                            {{ form.first_name }}
-
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                Last Name
-                            </label>
-
-                            {{ form.last_name }}
-
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                Phone
-                            </label>
-
-                            {{ form.phone }}
-
-                        </div>
-
-                    </div>
-
-                    <hr>
-
-                    <h6 class="fw-bold mb-3">
-                        User Role
-                    </h6>
-
-                    <div class="row">
-
-                        {% for radio in form.role %}
-
-                            <div class="col-md-4 mb-2">
-
-                                <div class="form-check">
-
-                                    {{ radio.tag }}
-
-                                    <label
-                                        class="form-check-label"
-                                        for="{{ radio.id_for_label }}"
-                                    >
-                                        {{ radio.choice_label }}
-                                    </label>
-
+                                <div class="form-text">
+                                    {{ field.help_text }}
                                 </div>
 
-                            </div>
+                            {% endif %}
 
-                        {% endfor %}
 
-                    </div>
+                            {% for error in field.errors %}
 
-                    <hr>
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
 
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
-                                Password
-                            </label>
-
-                            {{ form.password1 }}
+                            {% endfor %}
 
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                    {% endfor %}
 
-                            <label class="form-label">
-                                Confirm Password
-                            </label>
 
-                            {{ form.password2 }}
-
-                        </div>
-
-                    </div>
-
-                    <div class="d-flex justify-content-end gap-2">
-
-                        <a
-                            href="{% url 'accounts:login' %}"
-                            class="btn btn-outline-secondary"
-                        >
-                            Cancel
-                        </a>
-
-                        <button
-                            class="btn btn-primary"
-                            type="submit"
-                        >
-                            <i class="bi bi-check-circle"></i>
-                            Create Account
-                        </button>
-
-                    </div>
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100 py-2"
+                    >
+                        <i class="bi bi-person-plus"></i>
+                        Create Account
+                    </button>
 
                 </form>
+
+
+                <div class="text-center mt-4">
+
+                    <span class="text-muted">
+                        Already have an account?
+                    </span>
+
+                    <a
+                        href="{% url 'accounts:login' %}"
+                        class="text-decoration-none"
+                    >
+                        Login
+                    </a>
+
+                </div>
 
             </div>
 
@@ -183,6 +120,7 @@ Create Account
 
     </div>
 
+</div>
 </div>
 
 {% endblock %}

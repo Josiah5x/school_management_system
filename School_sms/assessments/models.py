@@ -549,33 +549,6 @@ class StudentTraitAssessment(models.Model):
         )
 
 
-####################################################
-class GradeScale(models.Model):
-
-    class ScaleType(models.TextChoices):
-        SECONDARY = "secondary", "Secondary"
-        PRIMARY = "primary", "Primary"
-
-    name = models.CharField(
-        max_length=100,
-    )
-
-    scale_type = models.CharField(
-        max_length=20,
-        choices=ScaleType.choices,
-    )
-
-    is_active = models.BooleanField(
-        default=True,
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
-
-    def __str__(self):
-        return self.name
-
 ##########################################
 class TermResult(models.Model):
     student = models.ForeignKey(

@@ -2,16 +2,16 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 
+
 @login_required
 def dashboard(request):
+
+    user = request.user
+    school = user.school
+
     context = {
-        "student_count": 0,
-        "teacher_count": 0,
-        "class_arm_count": 0,
-        "subject_count": 0,
-        "active_session": None,
-        "active_term": None,
-        "terms": [],
+        "school": school,
+        "user": user,
     }
 
     return render(
@@ -19,6 +19,8 @@ def dashboard(request):
         "dashboard/dashboard.html",
         context,
     )
+
+
 @login_required
 def assessment_menu(request):
  

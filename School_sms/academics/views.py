@@ -11,6 +11,9 @@ from .forms import (
     ClassSubjectForm,
     SubjectForm,
     TeacherSubjectAssignmentForm,
+    AcademicSessionForm,
+    TermForm,
+    Term,
 )
 
 # Local application models
@@ -20,6 +23,7 @@ from .models import (
     ClassSubject, 
     Subject, 
     TeacherSubjectAssignment,
+    AcademicSession,
 )
 
 

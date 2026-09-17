@@ -35,11 +35,11 @@
                 </a>
 
                 <a
-                    href="#"
+                    href="{% url 'dashboard:academic_menu' %}"
                     class="nav-link"
                 >
                     <i class="bi bi-journal-bookmark me-2"></i>
-                    Classes
+                    Accademics
                 </a>
 
                 <a
@@ -107,7 +107,7 @@
            
             
             <a class="mb-3 pt-5">
-                <form method="post" action="{% url 'accounts:logout' %}">
+                <form method="post" action="#">
                     {% csrf_token %}
                     <button type="submit" class="dropdown-item">
                         <i class="bi bi-box-arrow-right me-2"></i>
@@ -130,6 +130,7 @@
      
 <div class="d-flex align-items-center justify-content-between pt-5 mb-4">
     <div>
+        <h2 class="fw-bold tracking-tight text-dark mb-1">{{ school.name }}</h2>
         <h2 class="fw-bold tracking-tight text-dark mb-1">School Overview</h2>
         <div class="d-flex align-items-center gap-2">
             <span class="badge bg-primary-subtle text-primary fw-semibold px-2.5 py-1.5 rounded-pill fs-7">
