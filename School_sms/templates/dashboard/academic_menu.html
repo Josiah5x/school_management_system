@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}
-My Profile | School SMS
+{{title}} | School SMS
 {% endblock %}
 
 {% block page_title %}
@@ -219,7 +219,7 @@ Assessment List
 
                 <div class="model-row">
 
-                    <a href="#" class="model-name">
+                    <a href="{% url 'academics:class_list' %}" class="model-name">
                         Academic class
                     </a>
 

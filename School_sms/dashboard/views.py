@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 
-
 @login_required
 def dashboard(request):
 
@@ -20,36 +19,46 @@ def dashboard(request):
         context,
     )
 
-
 @login_required
 def assessment_menu(request):
  
-
+    context = {
+            "title": "Assessment Menu",
+        }
     return render(
         request,
-        "dashboard/assessment_menu.html"
+        "dashboard/assessment_menu.html", context
     )
+
 @login_required
 def academic_menu(request):
  
-
+    context = {
+    "title": "Academis Menu",
+    }
     return render(
         request,
-        "dashboard/academic_menu.html"
+        "dashboard/academic_menu.html",context
     )
+
 @login_required
 def school_menu(request):
  
-
+    context = {
+                    "title": "Schools Menu",
+                }
     return render(
         request,
-        "dashboard/school_menu.html"
+        "dashboard/school_menu.html", context
     )
+
 @login_required
 def student_menu(request):
  
-
+    context = {
+                "title": "Students Menu",
+            }
     return render(
         request,
-        "dashboard/student_menu.html"
+        "dashboard/student_menu.html", context
     )
