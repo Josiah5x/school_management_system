@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Assessment Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container py-4 pt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">
+                Assessment Dashboard
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage assessments, grading, traits and results.
+            </p>
+        </div>
+    </div>
+
+
+    <div class="row g-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-muted">
+                                Components
+                            </h6>
+
+                            <h2 class="fw-bold">
+                                {{ component_count }}
+                            </h2>
+                        </div>
+
+                        <i class="bi bi-list-check fs-1 text-primary"></i>
+                    </div>
+
+                    <a
+                        href="{% url 'assessments:component_list' %}"
+                        class="btn btn-sm btn-outline-primary mt-3"
+                    >
+                        Manage Components
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-muted">
+                                Assessment Schemes
+                            </h6>
+
+                            <h2 class="fw-bold">
+                                {{ scheme_count }}
+                            </h2>
+                        </div>
+
+                        <i class="bi bi-diagram-3 fs-1 text-success"></i>
+                    </div>
+
+                    <a
+                        href="{% url 'assessments:scheme_list' %}"
+                        class="btn btn-sm btn-outline-success mt-3"
+                    >
+                        Manage Schemes
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-muted">
+                                Grade Scales
+                            </h6>
+
+                            <h2 class="fw-bold">
+                                {{ grade_scale_count }}
+                            </h2>
+                        </div>
+
+                        <i class="bi bi-award fs-1 text-warning"></i>
+                    </div>
+
+                    <a
+                        href="{% url 'assessments:grade_scale_list' %}"
+                        class="btn btn-sm btn-outline-warning mt-3"
+                    >
+                        Manage Grades
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="text-muted">
+                                Student Assessments
+                            </h6>
+
+                            <h2 class="fw-bold">
+                                {{ assessment_count }}
+                            </h2>
+                        </div>
+
+                        <i class="bi bi-pencil-square fs-1 text-danger"></i>
+                    </div>
+
+                    <a
+                        href="{% url 'assessments:student_assessment_list' %}"
+                        class="btn btn-sm btn-outline-danger mt-3"
+                    >
+                        View Assessments
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0 mt-5">
+
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">
+                Quick Actions
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <a
+                        href="{% url 'assessments:student_assessment_create' %}"
+                        class="btn btn-primary w-100"
+                    >
+                        <i class="bi bi-plus-circle"></i>
+                        Enter Student Score
+                    </a>
+                </div>
+
+                <div class="col-md-4">
+                    <a
+                        href="{% url 'assessments:student_trait_create' %}"
+                        class="btn btn-success w-100"
+                    >
+                        <i class="bi bi-person-check"></i>
+                        Enter Trait Assessment
+                    </a>
+                </div>
+
+                <div class="col-md-4">
+                    <a
+                        href="{% url 'assessments:grade_scale_create' %}"
+                        class="btn btn-warning w-100"
+                    >
+                        <i class="bi bi-award"></i>
+                        Create Grade Scale
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

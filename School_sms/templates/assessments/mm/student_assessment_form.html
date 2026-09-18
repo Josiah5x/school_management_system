@@ -1,0 +1,377 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ title|default:"Enter Assessment" }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center mb-4">
+
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-pencil-square me-2"></i>
+                {{ title|default:"Enter Assessment" }}
+            </h3>
+
+            <p class="text-muted mb-0">
+                Enter student's assessment score.
+            </p>
+        </div>
+
+        <a href="{% url 'assessments:assessment_list' %}"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Back
+        </a>
+
+    </div>
+
+
+    <!-- Student Information -->
+    {% if student %}
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="row align-items-center">
+
+                <!-- Student Photo -->
+                <div class="col-md-1 text-center mb-3 mb-md-0">
+
+                    {% if student.photo %}
+                        <img src="{{ student.photo.url }}"
+                             class="rounded-circle"
+                             width="70"
+                             height="70"
+                             style="object-fit: cover;"
+                             alt="{{ student.full_name }}">
+                    {% else %}
+                        <div class="rounded-circle bg-primary
+                                    text-white d-flex
+                                    align-items-center
+                                    justify-content-center mx-auto"
+                             style="width:70px;height:70px;">
+
+                            <i class="bi bi-person fs-3"></i>
+
+                        </div>
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Student Details -->
+                <div class="col-md-11">
+
+                    <h5 class="fw-bold mb-1">
+                        {{ student.full_name }}
+                    </h5>
+
+                    <div class="row text-muted small">
+
+                        {% if student.admission_number %}
+                        <div class="col-md-3">
+                            <strong>Admission No:</strong>
+                            {{ student.admission_number }}
+                        </div>
+                        {% endif %}
+
+                        {% if enrollment %}
+                        <div class="col-md-3">
+                            <strong>Class:</strong>
+                            {{ enrollment.class_arm }}
+                        </div>
+                        {% endif %}
+
+                        {% if term %}
+                        <div class="col-md-3">
+                            <strong>Term:</strong>
+                            {{ term.get_term_display }}
+                        </div>
+                        {% endif %}
+
+                        {% if session %}
+                        <div class="col-md-3">
+                            <strong>Session:</strong>
+                            {{ session.name }}
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- Assessment Form -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-primary text-white">
+
+            <h5 class="mb-0">
+                <i class="bi bi-clipboard-check me-2"></i>
+                Assessment Details
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            {% if form.non_field_errors %}
+
+                <div class="alert alert-danger">
+
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <form method="post">
+
+                {% csrf_token %}
+
+
+                <div class="row g-4">
+
+                    <!-- Student -->
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Student
+                        </label>
+
+                        {{ form.student }}
+
+                        {% if form.student.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.student.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Enrollment -->
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Enrollment
+                        </label>
+
+                        {{ form.enrollment }}
+
+                        {% if form.enrollment.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.enrollment.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Term -->
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Academic Term
+                        </label>
+
+                        {{ form.term }}
+
+                        {% if form.term.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.term.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Subject -->
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Subject
+                        </label>
+
+                        {{ form.class_subject }}
+
+                        {% if form.class_subject.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.class_subject.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Assessment Scheme -->
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Assessment Scheme
+                        </label>
+
+                        {{ form.assessment_scheme }}
+
+                        {% if form.assessment_scheme.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.assessment_scheme.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Component -->
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Assessment Component
+                        </label>
+
+                        {{ form.component }}
+
+                        {% if form.component.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.component.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- Score -->
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Score
+                        </label>
+
+                        <div class="input-group">
+
+                            {{ form.score }}
+
+                            <span class="input-group-text">
+                                / {{ component_maximum|default:"100" }}
+                            </span>
+
+                        </div>
+
+                        {% if form.score.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.score.errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="form-text">
+                            Enter the student's actual score.
+                        </div>
+
+                    </div>
+
+
+                    <!-- Approval -->
+                    {% if form.approved %}
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-semibold">
+                            Approval
+                        </label>
+
+                        <div class="form-check form-switch mt-2">
+
+                            {{ form.approved }}
+
+                            <label class="form-check-label">
+                                Mark assessment as approved
+                            </label>
+
+                        </div>
+
+                        {% if form.approved.errors %}
+                            <div class="text-danger small mt-1">
+                                {{ form.approved.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Score Information -->
+                <div class="alert alert-info mt-4">
+
+                    <div class="d-flex">
+
+                        <i class="bi bi-info-circle-fill fs-5 me-2"></i>
+
+                        <div>
+
+                            <strong>Assessment information</strong>
+
+                            <p class="mb-0 small">
+                                The score cannot be negative or exceed
+                                the maximum score configured for the
+                                assessment component.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-2 mt-4">
+
+                    <a href="{% url 'assessments:assessment_list' %}"
+                       class="btn btn-light border">
+
+                        Cancel
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary px-4">
+
+                        <i class="bi bi-save me-1"></i>
+                        Save Assessment
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
