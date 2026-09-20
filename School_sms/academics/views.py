@@ -27,6 +27,10 @@ from .models import (
 )
 
 
+@login_required
+def dashboard(request):
+    return render(request, 'academics/dashboard.html',{})
+
 
 @login_required
 def session_list(request):

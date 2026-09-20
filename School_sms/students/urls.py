@@ -13,6 +13,13 @@ urlpatterns = [
     # -------------------------
 
     path(
+        "dashboard/",
+        views.dashboard,
+        name="dashboard",
+    ),
+
+    path(
+        
         "",
         views.student_list,
         name="student_list",

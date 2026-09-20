@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+
+{% block title %}
+Student Dashboard | School SMS
+{% endblock %}
+
+{% block topbar_title %}
+Student Management
+{% endblock %}
+
+{% block content %}
+
+ <style>
+        body {
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: #111827;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 0 22px;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            border-bottom: 1px solid #273244;
+        }
+
+        .sidebar-brand i {
+            color: #6366f1;
+            margin-right: 10px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 12px;
+        }
+
+        .sidebar-section {
+            color: #9ca3af;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin: 20px 12px 8px;
+            font-weight: 700;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            margin-bottom: 4px;
+            color: #d1d5db;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        .sidebar-menu a i {
+            width: 20px;
+            font-size: 17px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 22px;
+            height: 100%;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 22px;
+        }
+
+        .stat-title {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 27px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .page-title {
+            font-size: 25px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .page-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .quick-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 9px;
+            text-decoration: none;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .quick-action:hover {
+            background: #f9fafb;
+        }
+
+        .quick-action i {
+            font-size: 20px;
+            color: #4f46e5;
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #4f46e5;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .content {
+                padding: 18px;
+            }
+        }
+    </style>
+
+<div class="container-fluid mb-4 dashboard-card pt-5">
+
+    <div class="page-title">
+        Student Dashboard
+    </div>
+
+    <div class="page-subtitle">
+        Manage students, enrollment, classes and guardians.
+    </div>
+
+</div>
+
+
+<!-- Statistics -->
+
+<div class="container-fluid row g-4 mb-4 ">
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+
+                    <div class="stat-title">
+                        Total Students
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_students|default:"0" }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+
+                    <div class="stat-title">
+                        Active Students
+                    </div>
+
+                    <div class="stat-value">
+                        {{ active_students|default:"0" }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-person-check"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+
+                    <div class="stat-title">
+                        Enrollments
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_enrollments|default:"0" }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-journal-check"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+
+                    <div class="stat-title">
+                        Guardians
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_guardians|default:"0" }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-person-heart"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="container-fluid row g-4">
+
+    <!-- Recent Students -->
+
+    <div class="col-lg-8">
+
+        <div class="dashboard-card">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h5 class="fw-bold mb-0">
+                    Recent Students
+                </h5>
+
+                <a
+                    href="{% url 'students:student_create'%}"
+                    class="btn btn-primary btn-sm">
+
+                    <i class="bi bi-plus-lg"></i>
+                    Add Student
+
+                </a>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                        <tr>
+                            <th>Student</th>
+                            <th>Admission No.</th>
+                            <th>Class</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for student in recent_students %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="fw-semibold">
+                                        {{ student.full_name }}
+                                    </div>
+
+                                </td>
+
+                                <td>
+                                    {{ student.admission_number|default:"-" }}
+                                </td>
+
+                                <td>
+                                    {{ student.current_class|default:"-" }}
+                                </td>
+
+                                <td>
+
+                                    {% if student.is_active %}
+
+                                        <span class="badge bg-success">
+                                            Active
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+                                            Inactive
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+
+                                <td
+                                    colspan="4"
+                                    class="text-center text-muted py-4">
+
+                                    No students found.
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Quick Actions -->
+
+    <div class="col-lg-4">
+
+        <div class="dashboard-card">
+
+            <h5 class="fw-bold mb-4">
+                Student Management
+            </h5>
+
+            <a
+                href="{% url 'students:student_create'%}"
+                class="quick-action">
+
+                <i class="bi bi-person-plus"></i>
+
+                <span>
+                    Register Student
+                </span>
+
+            </a>
+
+            <a
+                href="{% url 'students:student_list' %}"
+                class="quick-action">
+
+                <i class="bi bi-search"></i>
+
+                <span>
+                    Search Students
+                </span>
+
+            </a>
+
+            <a
+                href="#"
+                class="quick-action">
+
+                <i class="bi bi-journal-plus"></i>
+
+                <span>
+                    Enroll Student
+                </span>
+
+            </a>
+
+            <a
+                href="{% url 'students:guardian_list' %}"
+                class="quick-action">
+
+                <i class="bi bi-person-heart"></i>
+
+                <span>
+                    Manage Guardians
+                </span>
+
+            </a>
+
+            <a
+                href="#"
+                class="quick-action">
+
+                <i class="bi bi-arrow-repeat"></i>
+
+                <span>
+                    Student Promotion
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Class Distribution -->
+
+<div class="dashboard-card mt-4">
+
+    <h5 class="fw-bold mb-4">
+        Student Distribution by Class
+    </h5>
+
+    <div class="table-responsive">
+
+        <table class="table align-middle">
+
+            <thead>
+
+                <tr>
+                    <th>Class</th>
+                    <th>Students</th>
+                    <th>Capacity</th>
+                    <th>Occupancy</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in class_distribution %}
+
+                    <tr>
+
+                        <td class="fw-semibold">
+                            {{ item.name }}
+                        </td>
+
+                        <td>
+                            {{ item.student_count }}
+                        </td>
+
+                        <td>
+                            {{ item.capacity }}
+                        </td>
+
+                        <td>
+
+                            {% if item.capacity %}
+
+                                {% widthratio item.student_count item.capacity 100 %}
+                                %
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="text-center text-muted py-4">
+
+                            No class information available.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

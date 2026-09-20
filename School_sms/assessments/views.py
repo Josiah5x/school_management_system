@@ -1,8 +1,11 @@
+from decimal import Decimal
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.db.models import Prefetch
 
 from .forms import AssessmentComponentForm
 from .forms import AssessmentSchemeComponentForm
@@ -170,6 +173,47 @@ def scheme_list(request):
 
 
 @login_required
+def scheme_detail(request, scheme_id):
+    scheme = get_object_or_404(
+        AssessmentScheme.objects.prefetch_related(
+            Prefetch(
+                "components",
+                queryset=(
+                    AssessmentSchemeComponent.objects
+                    .select_related("component")
+                    .order_by("display_order")
+                ),
+            )
+        ),
+        pk=scheme_id,
+    )
+
+    components = list(scheme.components.all())
+
+    total = sum(
+        (
+            component.maximum_score
+            for component in components
+        ),
+        Decimal("0.00"),
+    )
+
+    remaining = Decimal("100.00") - total
+
+    return render(
+        request,
+        "assessments/schemes/scheme_detail.html",
+        {
+            "scheme": scheme,
+            "components": components,
+            "component_total": total,
+            "remaining": remaining,
+            "scheme_complete": total == Decimal("100.00"),
+        },
+    )
+
+
+@login_required
 def scheme_create(request):
     if request.method == "POST":
         form = AssessmentSchemeForm(request.POST)
@@ -264,9 +308,80 @@ def scheme_component_create(request):
 
     return render(
         request,
-        "assessments/schemes/component_form.html",
+        "assessments/schemes/form.html",
         {
             "form": form,
+            "title": "Add Scheme Component",
+        },
+    )
+
+
+def scheme_component_add(
+    request,
+    scheme_id,
+):
+    scheme = get_object_or_404(
+        AssessmentScheme,
+        pk=scheme_id,
+    )
+
+    if request.method == "POST":
+        form = AssessmentSchemeComponentForm(
+            request.POST
+        )
+
+        if form.is_valid():
+            component = form.save(
+                commit=False
+            )
+
+            component.scheme = scheme
+
+            current_total = sum(
+                (
+                    item.maximum_score
+                    for item in scheme.components.all()
+                ),
+                Decimal("0.00"),
+            )
+
+            new_total = (
+                current_total
+                + component.maximum_score
+            )
+
+            if new_total > Decimal("100.00"):
+                form.add_error(
+                    "maximum_score",
+                    (
+                        "The scheme cannot exceed "
+                        "100 marks. "
+                        f"Current total: {current_total}."
+                    ),
+                )
+
+            else:
+                component.save()
+
+                messages.success(
+                    request,
+                    "Assessment component added successfully.",
+                )
+
+                return redirect(
+                    "assessments:scheme_detail",
+                    scheme_id=scheme.id,
+                )
+
+    else:
+        form = AssessmentSchemeComponentForm()
+
+    return render(
+        request,
+        "assessments/schemes/form.html",
+        {
+            "form": form,
+            "scheme": scheme,
             "title": "Add Scheme Component",
         },
     )
@@ -434,7 +549,7 @@ def trait_create(request):
 
     return render(
         request,
-        "assessments/traits/form.html",
+        "assessments/student_assessments/form.html",
         {
             "form": form,
             "title": "Create Assessment Trait",
@@ -470,7 +585,7 @@ def student_trait_create(request):
 
     return render(
         request,
-        "assessments/traits/student_form.html",
+        "assessments/student_assessments/form.html",
         {
             "form": form,
             "title": "Assess Student Trait",

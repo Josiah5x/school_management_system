@@ -7,6 +7,13 @@ app_name = "academics"
 
 
 urlpatterns = [
+
+     path(
+        "dashboard/",
+        views.dashboard,
+        name="dashboard",
+    ),
+
     # Academic Sessions
     path(
         "sessions/",
@@ -37,7 +44,7 @@ urlpatterns = [
         views.session_delete,
         name="session_delete",
     ),
-
+###############################
     # Terms
     path(
         "terms/",
