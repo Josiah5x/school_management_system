@@ -103,30 +103,30 @@ def calculate_percentage(
 
 
 ########################################
-def get_grade(
-    score: Decimal,
-    scale: GradeScale,
-) -> GradeScaleItem:
-    """
-    Find the grading scale item matching a
-    student's score.
-    """
+# def get_grade(
+#     score: Decimal,
+#     scale: GradeScale,
+# ) -> GradeScaleItem:
+#     """
+#     Find the grading scale item matching a
+#     student's score.
+#     """
 
-    grade_item = (
-        scale.items.filter(
-            minimum_score__lte=score,
-            maximum_score__gte=score,
-        )
-        .order_by("-minimum_score")
-        .first()
-    )
+#     grade_item = (
+#         scale.items.filter(
+#             minimum_score__lte=score,
+#             maximum_score__gte=score,
+#         )
+#         .order_by("-minimum_score")
+#         .first()
+#     )
 
-    if grade_item is None:
-        raise ValidationError(
-            f"No grade exists for score {score} " f"on scale '{scale.name}'."
-        )
+#     if grade_item is None:
+#         raise ValidationError(
+#             f"No grade exists for score {score} " f"on scale '{scale.name}'."
+#         )
 
-    return grade_item
+#     return grade_item
 
 
 ####################################
@@ -835,3 +835,194 @@ def update_class_positions(
     )
 
     return results
+
+
+
+from django.db.models import Avg, Sum
+
+
+
+ZERO = Decimal("0.00")
+
+
+def get_grade(score, grade_scale=None):
+    """
+    Return the grade, grade point and remark for a score.
+
+    Pass a GradeScale when your school has multiple
+    grading scales.
+    """
+    if grade_scale is None:
+        grade_scale = GradeScale.objects.filter(
+            is_active=True,
+        ).first()
+
+    if grade_scale is None:
+        return "", None, ""
+
+    item = grade_scale.items.filter(
+        min_score__lte=score,
+        max_score__gte=score,
+    ).first()
+
+    if item is None:
+        return "", None, ""
+
+    return (
+        item.grade,
+        item.grade_point,
+        item.remark,
+    )
+
+
+@transaction.atomic
+def calculate_subject_result(
+    student,
+    enrollment,
+    term,
+    class_subject,
+    grade_scale=None,
+):
+    """
+    Calculate and save one student's result for one subject.
+    """
+
+    if enrollment.student_id != student.pk:
+        raise ValidationError(
+            "The enrollment does not belong to this student."
+        )
+
+    if enrollment.session_id != term.session_id:
+        raise ValidationError(
+            "The enrollment and term must belong to the same session."
+        )
+
+    assessments = StudentAssessment.objects.filter(
+        student=student,
+        enrollment=enrollment,
+        term=term,
+        class_subject=class_subject,
+    ).select_related("component")
+
+    # Each assessment score is already entered against
+    # its scheme component's maximum score.
+    total_score = assessments.aggregate(
+        total=Sum("score"),
+    )["total"] or ZERO
+
+    maximum_score = sum(
+        (
+            assessment.component.maximum_score
+            for assessment in assessments
+        ),
+        ZERO,
+    )
+
+    if total_score < ZERO:
+        raise ValidationError("Total score cannot be negative.")
+
+    if maximum_score and total_score > maximum_score:
+        raise ValidationError(
+            "The total score exceeds the configured component marks."
+        )
+
+    # Your SubjectResult model stores a score out of 100.
+    # Do not silently scale a partially entered assessment.
+    if maximum_score != Decimal("100.00"):
+        raise ValidationError(
+            "The assessment components for this subject must "
+            "total 100 marks before calculating the result."
+        )
+
+    grade, grade_point, remark = get_grade(
+        total_score,
+        grade_scale,
+    )
+
+    result, _ = SubjectResult.objects.update_or_create(
+        student=student,
+        term=term,
+        class_subject=class_subject,
+        defaults={
+            "enrollment": enrollment,
+            "total_score": total_score,
+            "grade": grade,
+            "grade_point": grade_point,
+            "remark": remark,
+        },
+    )
+
+    return result
+
+
+@transaction.atomic
+def calculate_subject_positions(term, class_subject):
+    """
+    Rank students within a subject, highest score first.
+    Equal scores share a position.
+    """
+
+    results = SubjectResult.objects.filter(
+        term=term,
+        class_subject=class_subject,
+    ).order_by("-total_score", "student_id")
+
+    previous_score = None
+    position = 0
+
+    for index, result in enumerate(results, start=1):
+        if result.total_score != previous_score:
+            position = index
+            previous_score = result.total_score
+
+        if result.position != position:
+            result.position = position
+            result.save(update_fields=["position", "updated_at"])
+
+
+@transaction.atomic
+def calculate_term_result(student, enrollment, term):
+    """
+    Calculate one student's term summary from their subject results.
+    """
+
+    if enrollment.student_id != student.pk:
+        raise ValidationError(
+            "The enrollment does not belong to this student."
+        )
+
+    if enrollment.session_id != term.session_id:
+        raise ValidationError(
+            "The enrollment and term must belong to the same session."
+        )
+
+    subject_results = SubjectResult.objects.filter(
+        student=student,
+        enrollment=enrollment,
+        term=term,
+    )
+
+    aggregate = subject_results.aggregate(
+        total=Sum("total_score"),
+        average=Avg("total_score"),
+    )
+
+    subject_count = subject_results.count()
+    total_score = aggregate["total"] or ZERO
+    average_score = aggregate["average"] or ZERO
+
+    term_result, _ = TermResult.objects.update_or_create(
+        student=student,
+        term=term,
+        defaults={
+            "enrollment": enrollment,
+            "total_score": total_score,
+            "subject_count": subject_count,
+            "average_score": average_score,
+            "next_term_resumption_date": (
+                term.next_term_resumption_date
+            ),
+        },
+    )
+
+    return term_result

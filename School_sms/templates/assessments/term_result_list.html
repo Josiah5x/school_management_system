@@ -1,0 +1,149 @@
+
+{% extends "base.html" %}
+
+{% block title %}Term Results | School Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <div class="d-flex flex-wrap justify-content-between
+                align-items-center gap-3 mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Term Results</h2>
+            <p class="text-muted mb-0">
+                Review students' overall academic performance.
+            </p>
+        </div>
+
+        <a href="{% url 'assessments:subject_result_list' %}"
+           class="btn btn-outline-primary">
+            <i class="bi bi-journal-text me-1"></i>
+            Subject Results
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-6 col-lg-4">
+                    <label for="term" class="form-label">
+                        Academic Term
+                    </label>
+
+                    <select name="term" id="term"
+                            class="form-select">
+                        <option value="">All terms</option>
+
+                        {% for term in terms %}
+                            <option value="{{ term.pk }}"
+                                {% if selected_term == term.pk|stringformat:"s" %}
+                                    selected
+                                {% endif %}>
+                                {{ term.session.name }} —
+                                {{ term.get_term_display }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel me-1"></i>
+                        Filter
+                    </button>
+
+                    <a href="{% url 'assessments:term_result_list' %}"
+                       class="btn btn-outline-secondary">
+                        Reset
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Students' Performance</h5>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Student</th>
+                        <th>Academic Session</th>
+                        <th>Term</th>
+                        <th class="text-center">Subjects</th>
+                        <th class="text-end">Total Score</th>
+                        <th class="text-end">Average (%)</th>
+                        <th class="text-center">Position</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for result in results %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>
+                                <div class="fw-semibold">
+                                    {{ result.student.full_name }}
+                                </div>
+                            </td>
+
+                            <td>{{ result.term.session.name }}</td>
+                            <td>{{ result.term.get_term_display }}</td>
+
+                            <td class="text-center">
+                                {{ result.subject_count }}
+                            </td>
+
+                            <td class="text-end">
+                                {{ result.total_score|floatformat:2 }}
+                            </td>
+
+                            <td class="text-end fw-semibold">
+                                {{ result.average_score|floatformat:2 }}%
+                            </td>
+
+                            <td class="text-center">
+                                {% if result.position %}
+                                    {{ result.position }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if result.is_published %}
+                                    <span class="badge text-bg-success">
+                                        Published
+                                    </span>
+                                {% else %}
+                                    <span class="badge text-bg-warning">
+                                        Draft
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="9"
+                                class="text-center py-5 text-muted">
+                                <i class="bi bi-clipboard-data fs-2 d-block mb-2"></i>
+                                No term results found.
+                                Calculate results first, or select another term.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

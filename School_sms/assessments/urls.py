@@ -102,4 +102,18 @@ urlpatterns = [
         views.grade_scale_item_create,
         name="grade_scale_item_create",
     ),
+
+    path(
+    "results/subjects/",
+    views.subject_result_list,
+    name="subject_result_list",
+    ),
+
+    
+    path(
+        "results/terms/",
+        views.term_result_list,
+        name="term_result_list",
+    ),
+
 ]

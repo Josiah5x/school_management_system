@@ -555,3 +555,131 @@ def grade_scale_item_create(request):
             "title": "Add Grade Scale Item",
         },
     )
+
+
+
+
+
+from academics.models import Term
+from .models import TermResult,SubjectResult
+
+
+@login_required
+def term_result_list(request):
+    school = getattr(request.user, "school", None)
+
+    if school is None:
+        results = TermResult.objects.none()
+        terms = Term.objects.none()
+    else:
+        results = (
+            TermResult.objects
+            .filter(term__session__school=school)
+            .select_related(
+                "student",
+                "enrollment",
+                "term",
+                "term__session",
+            )
+            .order_by(
+                "-term__session__start_date",
+                "term__term",
+                "-average_score",
+            )
+        )
+
+        terms = (
+            Term.objects
+            .filter(session__school=school)
+            .select_related("session")
+            .order_by("-session__start_date", "term")
+        )
+
+    selected_term = request.GET.get("term", "")
+
+    if selected_term:
+        results = results.filter(term_id=selected_term)
+
+    context = {
+        "results": results,
+        "terms": terms,
+        "selected_term": selected_term,
+    }
+
+    return render(
+        request,
+        "assessments/term_result_list.html",
+        context,
+    )
+
+
+
+@login_required
+def subject_result_list(request):
+    results = (
+        SubjectResult.objects
+        .select_related(
+            "student",
+            "enrollment",
+            "term",
+            "class_subject",
+            "class_subject__subject",
+            "class_subject__academic_class",
+        )
+        .filter(
+            enrollment__school=request.user.school,
+        )
+        .order_by(
+            "class_subject__academic_class__name",
+            "class_subject__subject__name",
+            "-total_score",
+        )
+    )
+
+    term_id = request.GET.get("term")
+    class_subject_id = request.GET.get("class_subject")
+
+    if term_id:
+        results = results.filter(term_id=term_id)
+
+    if class_subject_id:
+        results = results.filter(
+            class_subject_id=class_subject_id,
+        )
+
+    return render(
+        request,
+        "assessments/subject_result_list.html",
+        {
+            "results": results,
+            "terms": _school_terms(request),
+            "class_subjects": _school_class_subjects(request),
+            "selected_term": term_id or "",
+            "selected_class_subject": class_subject_id or "",
+        },
+    )
+
+
+def _school_terms(request):
+    from academics.models import Term
+
+    return Term.objects.filter(
+        session__school=request.user.school,
+    ).select_related("session").order_by(
+        "-session__start_date",
+        "term",
+    )
+
+
+def _school_class_subjects(request):
+    from academics.models import ClassSubject
+
+    return ClassSubject.objects.filter(
+        academic_class__school=request.user.school,
+    ).select_related(
+        "academic_class",
+        "subject",
+    ).order_by(
+        "academic_class__name",
+        "subject__name",
+    )

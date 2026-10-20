@@ -18,6 +18,13 @@ def dashboard(request):
         "dashboard/dashboard.html",
         context,
     )
+@login_required
+def main(request):
+
+    return render(
+        request,
+        "dashboard/main.html",
+    )
 
 @login_required
 def assessment_menu(request):
