@@ -2,11 +2,21 @@ from django.urls import path
 
 from . import views
 
+# Import LogoutView (the class), NOT logout (the function)
+from django.contrib.auth.views import LogoutView 
+
 
 app_name = "accounts"
 
 
 urlpatterns = [
+
+      path(
+        "dashboard/",
+        views.dashboard,
+        name="dashboard",
+    ),
+    
     path(
         "login/",
         views.UserLoginView.as_view(),
@@ -42,4 +52,10 @@ urlpatterns = [
         views.user_toggle_active,
         name="user_toggle_active",
     ),
+
+    path(
+        "logout/",
+        LogoutView.as_view(),
+        name="logout"
+    )
 ]

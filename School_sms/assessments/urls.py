@@ -36,6 +36,13 @@ urlpatterns = [
         views.scheme_list,
         name="scheme_list",
     ),
+
+    path(
+        "schemes/<int:scheme_id>/",
+        views.scheme_detail,
+        name="scheme_detail",
+    ),
+
     path(
         "schemes/create/",
         views.scheme_create,
@@ -50,6 +57,12 @@ urlpatterns = [
         "schemes/components/create/",
         views.scheme_component_create,
         name="scheme_component_create",
+    ),
+
+    path(
+        "schemes/<int:scheme_id>/components/add/",
+        views.scheme_component_add,
+        name="scheme_component_add",
     ),
 
     # Student assessments

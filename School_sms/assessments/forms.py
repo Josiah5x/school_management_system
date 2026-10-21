@@ -75,34 +75,36 @@ class AssessmentSchemeForm(BootstrapMixin, forms.ModelForm):
         ] = True
 
 
-class AssessmentSchemeComponentForm(
-    BootstrapMixin,
-    forms.ModelForm,
-):
+class AssessmentSchemeComponentForm(forms.ModelForm):
     class Meta:
         model = AssessmentSchemeComponent
         fields = [
-            "scheme",
             "component",
             "maximum_score",
             "display_order",
         ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.apply_bootstrap()
-
-        self.fields["scheme"].queryset = (
-            AssessmentScheme.objects.filter(
-                is_active=True
-            )
-        )
-
-        self.fields["component"].queryset = (
-            AssessmentComponent.objects.filter(
-                is_active=True
-            )
-        )
+        widgets = {
+            "component": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+            "maximum_score": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "step": "0.01",
+                    "min": "0",
+                    "max": "100",
+                }
+            ),
+            "display_order": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": "1",
+                }
+            ),
+        }
 
 
 class StudentAssessmentForm(

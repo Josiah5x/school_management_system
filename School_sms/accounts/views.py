@@ -8,12 +8,51 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 
+# views.py
+from django.contrib.auth import logout
+from django.views.decorators.http import require_POST
+
 from .forms import LoginForm
 from .forms import UserCreateForm
 from .forms import UserUpdateForm
 
 
 User = get_user_model()
+
+
+@login_required
+def dashboard(request):
+    school = request.user.school
+
+    users = User.objects.filter(
+        school=school,
+    )
+
+    context = {
+        "total_users": users.count(),
+
+        "total_teachers": users.filter(
+            role__in=[
+                User.Role.TEACHER,
+                User.Role.FORM_TEACHER,
+                User.Role.HEAD_TEACHER,
+            ],
+        ).count(),
+
+        "total_students": users.filter(
+            role=User.Role.STUDENT,
+        ).count(),
+
+        "total_guardians": users.filter(
+            role=User.Role.PARENT,
+        ).count(),
+    }
+
+    return render(
+        request,
+        "accounts/dashboard.html",
+        context,
+    )
 
 
 class UserLoginView(LoginView):
@@ -28,6 +67,57 @@ class UserLoginView(LoginView):
             return "/schools/"
 
         return "/dashboard/"
+
+
+# class UserLoginView(LoginView):
+
+#     template_name = "accounts/login.html"
+
+#     authentication_form = LoginForm
+
+#     redirect_authenticated_user = True
+
+#     def get_success_url(self):
+
+#         user = self.request.user
+
+#         if user.role == User.Role.SUPER_ADMIN:
+#             return "/admin/"
+
+#         if user.role == User.Role.SCHOOL_ADMIN:
+#             return redirect("accounts:dashboard")
+
+#         if user.role == User.Role.PRINCIPAL:
+#             return redirect("accounts:dashboard")
+
+#         if user.role == User.Role.VICE_PRINCIPAL:
+#             return redirect("accounts:dashboard")
+
+#         if user.role == User.Role.HEAD_TEACHER:
+#             return redirect("accounts:dashboard")
+
+#         if user.role in [
+#             User.Role.TEACHER,
+#             User.Role.FORM_TEACHER,
+#         ]:
+#             return redirect("accounts:dashboard")
+
+#         if user.role in [
+#             User.Role.BURSAR,
+#             User.Role.ACCOUNTANT,
+#         ]:
+#             return redirect("accounts:dashboard")
+
+#         if user.role == User.Role.REGISTRAR:
+#             return redirect("accounts:dashboard")
+
+#         if user.role == User.Role.STUDENT:
+#             return redirect("accounts:dashboard")
+
+#         if user.role == User.Role.PARENT:
+#             return redirect("accounts:dashboard")
+
+#         return redirect("accounts:dashboard")
 
 
 @login_required
@@ -414,6 +504,7 @@ def user_detail(request, pk):
 
 @login_required
 def user_toggle_active(request, pk):
+
     current_user = request.user
 
     user = get_object_or_404(
@@ -487,8 +578,6 @@ def user_toggle_active(request, pk):
         pk=user.pk,
     )
 
-
-
     if request.method == "POST":
         form = UserPasswordChangeForm(
             request.user,
@@ -517,9 +606,6 @@ def user_toggle_active(request, pk):
             "form": form,
         },
     )
-
-
-
     user = get_object_or_404(
         User,
         pk=pk,
@@ -558,3 +644,9 @@ def user_toggle_active(request, pk):
             "target_user": user,
         },
     )
+
+
+@require_POST
+def logout_view(request):
+    logout(request)  # Flushes the session and clears the user ID
+    return redirect('accounts:login')  # Matches your LOGOUT_REDIRECT_URL

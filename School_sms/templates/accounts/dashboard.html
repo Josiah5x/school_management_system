@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+
+{% block title %}
+Account Dashboard | School SMS
+{% endblock %}
+
+{% block topbar_title %}
+Account Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="mb-4">
+    <div class="page-title">
+        Welcome, {{ user.first_name|default:user.username }}
+    </div>
+
+    <div class="page-subtitle">
+        Manage your school management system activities.
+    </div>
+</div>
+
+
+<!-- Statistics -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+                    <div class="stat-title">
+                        Users
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_users|default:"0" }}
+                    </div>
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+                    <div class="stat-title">
+                        Teachers
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_teachers|default:"0" }}
+                    </div>
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+                    <div class="stat-title">
+                        Students
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_students|default:"0" }}
+                    </div>
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-mortarboard"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+                    <div class="stat-title">
+                        Guardians
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_guardians|default:"0" }}
+                    </div>
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-person-heart"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="row g-4">
+
+    <!-- School Information -->
+
+    <div class="col-lg-8">
+
+        <div class="dashboard-card">
+
+            <h5 class="fw-bold mb-4">
+                School Information
+            </h5>
+
+            {% if user.school %}
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted">
+                            School Name
+                        </small>
+
+                        <div class="fw-semibold">
+                            {{ user.school.name }}
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted">
+                            Short Name
+                        </small>
+
+                        <div class="fw-semibold">
+                            {{ user.school.short_name|default:"-" }}
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted">
+                            Phone
+                        </small>
+
+                        <div>
+                            {{ user.school.phone|default:"-" }}
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <small class="text-muted">
+                            Email
+                        </small>
+
+                        <div>
+                            {{ user.school.email|default:"-" }}
+                        </div>
+
+                    </div>
+
+                    <div class="col-12">
+
+                        <small class="text-muted">
+                            Address
+                        </small>
+
+                        <div>
+                            {{ user.school.address }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-warning">
+                    Your account is not currently associated
+                    with a school.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Quick Actions -->
+
+    <div class="col-lg-4">
+
+        <div class="dashboard-card">
+
+            <h5 class="fw-bold mb-4">
+                Quick Actions
+            </h5>
+
+            <a
+                href="{% url 'academics:dashboard' %}"
+                class="quick-action">
+
+                <i class="bi bi-calendar3"></i>
+
+                <span>
+                    Academic Management
+                </span>
+
+            </a>
+
+            <a
+                href="{% url 'students:dashboard' %}"
+                class="quick-action">
+
+                <i class="bi bi-people"></i>
+
+                <span>
+                    Student Management
+                </span>
+
+            </a>
+
+            <a
+                href="#"
+                class="quick-action">
+
+                <i class="bi bi-person-plus"></i>
+
+                <span>
+                    Register User
+                </span>
+
+            </a>
+
+            <a
+                href="#"
+                class="quick-action">
+
+                <i class="bi bi-gear"></i>
+
+                <span>
+                    System Settings
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

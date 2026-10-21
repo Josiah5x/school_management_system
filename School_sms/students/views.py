@@ -16,6 +16,10 @@ from .models import StudentGuardian
 
 
 @login_required
+def dashboard(request):
+    return render(request, 'students/dashboard.html',{})
+
+@login_required
 def student_list(request):
     students = (
         Student.objects

@@ -27,6 +27,11 @@ from .models import (
 )
 
 
+@login_required
+def dashboard(request):
+    total_sessions = AcademicSession.objects.count()
+    return render(request, 'academics/dashboard.html',{"total_sessions":total_sessions})
+
 
 @login_required
 def session_list(request):

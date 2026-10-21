@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-primary text-white">
+
+                    <h5 class="mb-0">
+                        {{ title }}
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+
+                        {% endif %}
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Scheme Name
+                            </label>
+
+                            {{ form.name }}
+
+                            {{ form.name.errors }}
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Scheme Type
+                            </label>
+
+                            {{ form.scheme_type }}
+
+                            {{ form.scheme_type.errors }}
+
+                        </div>
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Maximum Total
+                            </label>
+
+                            {{ form.maximum_total }}
+
+                            <div class="form-text">
+                                The Nigerian result engine uses a
+                                100-point total.
+                            </div>
+
+                            {{ form.maximum_total.errors }}
+
+                        </div>
+
+
+                        <div class="form-check mb-3">
+
+                            {{ form.is_default }}
+
+                            <label class="form-check-label">
+                                Default Scheme
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-check mb-4">
+
+                            {{ form.is_active }}
+
+                            <label class="form-check-label">
+                                Active
+                            </label>
+
+                        </div>
+
+
+                        <div class="d-flex justify-content-between">
+
+                            <a
+                                href="{% url 'assessments:scheme_list' %}"
+                                class="btn btn-outline-secondary"
+                            >
+                                Cancel
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                Save Scheme
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

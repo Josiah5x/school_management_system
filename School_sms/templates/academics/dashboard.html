@@ -1,0 +1,607 @@
+{% extends "base.html" %}
+
+{% block title %}
+Academic Dashboard | School SMS
+{% endblock %}
+
+{% block topbar_title %}
+Academic Management
+{% endblock %}
+
+{% block content %}
+
+ <style>
+        body {
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            width: 260px;
+            min-height: 100vh;
+            background: #111827;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            padding: 0 22px;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            border-bottom: 1px solid #273244;
+        }
+
+        .sidebar-brand i {
+            color: #6366f1;
+            margin-right: 10px;
+        }
+
+        .sidebar-menu {
+            padding: 20px 12px;
+        }
+
+        .sidebar-section {
+            color: #9ca3af;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin: 20px 12px 8px;
+            font-weight: 700;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            margin-bottom: 4px;
+            color: #d1d5db;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: #1f2937;
+            color: white;
+        }
+
+        .sidebar-menu a i {
+            width: 20px;
+            font-size: 17px;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 22px;
+            height: 100%;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 22px;
+        }
+
+        .stat-title {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 27px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .page-title {
+            font-size: 25px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .page-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .quick-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 9px;
+            text-decoration: none;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .quick-action:hover {
+            background: #f9fafb;
+        }
+
+        .quick-action i {
+            font-size: 20px;
+            color: #4f46e5;
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #4f46e5;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        @media (max-width: 991px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .content {
+                padding: 18px;
+            }
+        }
+    </style>
+
+<div class="container-fluid mb-4 pt-5">
+
+    <div class="page-title">
+        Academic Dashboard
+    </div>
+
+    <div class="page-subtitle">
+        Manage sessions, terms, classes, subjects and teachers.
+    </div>
+
+</div>
+
+
+<!-- Statistics -->
+
+<div class="container-fluid row g-4 mb-4">
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+
+                    <div class="stat-title">
+                        Academic Sessions
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_sessions|default:"0" }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-calendar3"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+
+                    <div class="stat-title">
+                        Terms
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_terms|default:"0" }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-calendar-week"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+
+                    <div class="stat-title">
+                        Classes
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_classes|default:"0" }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-xl-3 col-md-6">
+
+        <div class="stat-card">
+
+            <div class="d-flex justify-content-between">
+
+                <div>
+
+                    <div class="stat-title">
+                        Subjects
+                    </div>
+
+                    <div class="stat-value">
+                        {{ total_subjects|default:"0" }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="container-fluid row g-4">
+
+    <!-- Current Session -->
+
+    <div class="col-lg-7">
+
+        <div class="dashboard-card">
+
+            <h5 class="fw-bold mb-4">
+                Current Academic Session
+            </h5>
+
+            {% if current_session %}
+
+                <div class="mb-4">
+
+                    <h3 class="fw-bold">
+                        {{ current_session.name }}
+                    </h3>
+
+                    <p class="text-muted mb-0">
+                        {{ current_session.start_date }}
+                        -
+                        {{ current_session.end_date }}
+                    </p>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted">
+                            Current Term
+                        </small>
+
+                        {% if current_term %}
+
+                            <div class="fw-semibold mt-1">
+                                {{ current_term.get_term_display }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="text-muted">
+                                No current term
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <small class="text-muted">
+                            Result Status
+                        </small>
+
+                        {% if current_term and current_term.result_published %}
+
+                            <div class="mt-1">
+                                <span class="badge bg-success">
+                                    Published
+                                </span>
+                            </div>
+
+                        {% else %}
+
+                            <div class="mt-1">
+                                <span class="badge bg-warning text-dark">
+                                    Not Published
+                                </span>
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-warning">
+                    No current academic session has been configured.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Academic Actions -->
+
+    <div class="col-lg-5">
+
+        <div class="dashboard-card">
+
+            <h5 class="fw-bold mb-4">
+                Academic Setup
+            </h5>
+
+            <a
+                href="{% url 'academics:session_list' %}"
+                class="quick-action">
+
+                <i class="bi bi-calendar-plus"></i>
+
+                <span>
+                    Manage Academic Sessions
+                </span>
+
+            </a>
+
+            <a
+                href="{% url 'academics:term_list' %}"
+                class="quick-action">
+
+                <i class="bi bi-calendar2-week"></i>
+
+                <span>
+                    Manage Terms
+                </span>
+
+            </a>
+
+            <a
+                href="{% url 'academics:class_list' %}"
+                class="quick-action">
+
+                <i class="bi bi-building"></i>
+
+                <span>
+                    Manage Classes
+                </span>
+
+            </a>
+
+            <a
+                href="{% url 'academics:subject_list' %}"
+                class="quick-action">
+
+                <i class="bi bi-book"></i>
+
+                <span>
+                    Manage Subjects
+                </span>
+
+            </a>
+
+            <a
+                href="{% url 'academics:teacher_assignment_list' %}"
+                class="quick-action">
+
+                <i class="bi bi-person-badge"></i>
+
+                <span>
+                    Teacher Assignments
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Recent Sessions -->
+
+<div class="container-fluid dashboard-card mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h5 class="fw-bold mb-0">
+            Recent Academic Sessions
+        </h5>
+
+        <a href="#" class="btn btn-sm btn-outline-primary">
+            View All
+        </a>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table align-middle">
+
+            <thead>
+
+                <tr>
+                    <th>Session</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Status</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for session in recent_sessions %}
+
+                    <tr>
+
+                        <td class="fw-semibold">
+                            {{ session.name }}
+                        </td>
+
+                        <td>
+                            {{ session.start_date }}
+                        </td>
+
+                        <td>
+                            {{ session.end_date }}
+                        </td>
+
+                        <td>
+
+                            {% if session.is_current %}
+
+                                <span class="badge bg-success">
+                                    Current
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+                                    Previous
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="text-center text-muted py-4">
+
+                            No academic sessions found.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

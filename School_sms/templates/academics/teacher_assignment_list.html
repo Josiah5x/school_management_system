@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+
+{% block title %}
+Teacher Assignments
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4 pt-5">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Teacher Assignments
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage teachers, subjects, classes and academic sessions.
+            </p>
+        </div>
+
+        <div class="mt-3 mt-md-0">
+
+            <a
+                href="{% url 'academics:teacher_assignment_create' %}"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-plus-circle me-1"></i>
+                Assign Teacher
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Messages -->
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div
+                class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                role="alert"
+            >
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- Search -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form
+                method="get"
+                class="row g-2"
+            >
+
+                <div class="col-md-10">
+
+                    <div class="input-group">
+
+                        <span class="input-group-text">
+                            <i class="bi bi-search"></i>
+                        </span>
+
+                        <input
+                            type="text"
+                            name="q"
+                            value="{{ search }}"
+                            class="form-control"
+                            placeholder="Search teacher, subject, class or code..."
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-dark w-100"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Assignment Table -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0 fw-bold">
+                    Assignment List
+                </h5>
+
+                <span class="badge bg-primary">
+                    {{ assignments|length }} Assignment{{ assignments|length|pluralize }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if assignments %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>#</th>
+
+                                <th>Teacher</th>
+
+                                <th>Class</th>
+
+                                <th>Arm</th>
+
+                                <th>Subject</th>
+
+                                <th>Session</th>
+
+                                <th>Class Teacher</th>
+
+                                <th>Status</th>
+
+                                <th class="text-end">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for assignment in assignments %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ forloop.counter }}
+                                    </td>
+
+
+                                    <!-- Teacher -->
+
+                                    <td>
+
+                                        <div class="d-flex align-items-center">
+
+                                            <div
+                                                class="rounded-circle bg-primary text-white
+                                                       d-flex align-items-center justify-content-center me-2"
+                                                style="
+                                                    width:40px;
+                                                    height:40px;
+                                                "
+                                            >
+
+                                                {{ assignment.teacher.first_name|first|upper }}
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <div class="fw-semibold">
+
+                                                    {{ assignment.teacher.get_full_name|default:assignment.teacher.username }}
+
+                                                </div>
+
+                                                <small class="text-muted">
+
+                                                    {{ assignment.teacher.get_role_display }}
+
+                                                </small>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Class -->
+
+                                    <td>
+
+                                        <span class="fw-semibold">
+
+                                            {{ assignment.class_arm.academic_class.name }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Arm -->
+
+                                    <td>
+
+                                        <span class="badge bg-secondary">
+
+                                            {{ assignment.class_arm.name }}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Subject -->
+
+                                    <td>
+
+                                        <div class="fw-semibold">
+
+                                            {{ assignment.subject.name }}
+
+                                        </div>
+
+                                        <small class="text-muted">
+
+                                            {{ assignment.subject.code }}
+
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- Session -->
+
+                                    <td>
+
+                                        {{ assignment.session.name }}
+
+                                    </td>
+
+
+                                    <!-- Class Teacher -->
+
+                                    <td>
+
+                                        {% if assignment.is_class_teacher %}
+
+                                            <span class="badge bg-success">
+
+                                                <i class="bi bi-check-circle me-1"></i>
+                                                Yes
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-light text-dark">
+
+                                                No
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Status -->
+
+                                    <td>
+
+                                        {% if assignment.is_active %}
+
+                                            <span class="badge bg-success">
+
+                                                Active
+
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="badge bg-danger">
+
+                                                Inactive
+
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+
+                                    <!-- Actions -->
+
+                                    <td class="text-end">
+
+                                        <div class="btn-group">
+
+                                            <a
+                                                href="{% url 'academics:teacher_assignment_update' assignment.id %}"
+                                                class="btn btn-sm btn-outline-primary"
+                                                title="Edit"
+                                            >
+
+                                                <i class="bi bi-pencil"></i>
+
+                                            </a>
+
+
+                                            <a
+                                                href="{% url 'academics:teacher_assignment_delete' assignment.id %}"
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Delete"
+                                            >
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <!-- Empty state -->
+
+                <div class="text-center py-5">
+
+                    <div class="mb-3">
+
+                        <i
+                            class="bi bi-person-workspace display-1 text-muted"
+                        ></i>
+
+                    </div>
+
+                    <h5>
+                        No teacher assignments found
+                    </h5>
+
+                    <p class="text-muted">
+
+                        Start by assigning a teacher to a class and subject.
+
+                    </p>
+
+                    <a
+                        href="{% url 'academics:teacher_assignment_create' %}"
+                        class="btn btn-primary"
+                    >
+
+                        <i class="bi bi-plus-circle me-1"></i>
+
+                        Create Assignment
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
